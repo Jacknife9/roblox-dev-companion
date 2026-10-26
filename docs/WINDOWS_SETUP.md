@@ -3,7 +3,7 @@
 ## First run
 
 1. Install [Node.js 24 LTS](https://nodejs.org/en/download). Include npm and the PATH option. Open a **new** PowerShell window afterward.
-2. Extract `roblox-dev-companion.zip` with Windows **Extract All**. A short path such as `C:\Dev\roblox-dev-companion` avoids long path problems. Open the folder containing `package.json` and `App.tsx`; do not work inside the ZIP viewer.
+2. Extract `Roblox-Dev-Companion-MVP.zip` with Windows **Extract All**. A short path such as `C:\Dev\roblox-dev-companion` avoids long path problems. Open the folder containing `package.json` and `App.tsx`; do not work inside the ZIP viewer.
 3. Click the folder address bar, type `powershell`, and press Enter.
 4. Check Node and install the exact locked packages:
 
@@ -34,6 +34,10 @@ Expo's [project setup guide](https://docs.expo.dev/get-started/create-a-project/
 - **Balance:** base XP 100, growth 1.5, target level 4 → Calculate curve. Total is 475 XP. Upgrade cost 50, growth 2, purchases 3, income 25 gives 350 coins and 14 minutes.
 - **Scripts:** open XP curve module or Session leaderstats, read Where it goes, then Copy code. On a computer, paste it into the correct script type in Roblox Studio. Share .luau lets you move a source file from your phone.
 - **Backups:** in Projects, export a backup using Files/Drive/another share target of your choice. Import checks a backup before asking to replace your current workspace. Guest devices do not sync automatically. Optional accounts can sync; see [Account setup](ACCOUNT_SETUP.md).
+
+## New creator tools
+
+Use the fifth **Tools** tab for money, progression, code, publishing and stats helpers. Run `npm.cmd run server` in a second terminal for official DevEx lookups and public game stats. No sign-in is required for those lookups. See [Creator tools](CREATOR_TOOLS.md) for formulas, source links and limitations. The person icon opens companion accounts; the moon/sun icon changes theme.
 
 ## Browser preview on Windows
 

@@ -18,6 +18,10 @@ npm.cmd run build:mobile
 
 Read [VERIFICATION.md](VERIFICATION.md), including the remaining device checks and known Expo tooling advisories.
 
+## Configure the optional service
+
+For native builds with accounts/public lookups, set `EXPO_PUBLIC_API_URL` to your deployed HTTPS origin before building (locally or as a public EAS environment variable). Host the API with persistent SQLite storage; proxy `/v1` on the same origin as the web build. No public endpoint is configured in the source. See [Account setup](ACCOUNT_SETUP.md). This value is public; never put secrets or Roblox API keys in it. Offline tools work without a service.
+
 ## Prepare your identity
 
 1. Decide the final independent app brand. The requested working title has not been approved by Roblox or an app store. Review [Roblox's name/logo rules](https://en.help.roblox.com/hc/en-us/articles/115001708126-Roblox-Name-and-Logo-Community-Usage-Guidelines) before commercial listing. The included original terminal icon does not use Roblox's logo. “Unofficial” is a disclosure, not permission to use a trademark.

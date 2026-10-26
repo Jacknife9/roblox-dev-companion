@@ -15,7 +15,7 @@ No competitor install counts, paid conversions, review corpus or revenue estimat
 | MVP / private beta | All features delivered here | Free | Test the core workflow and collect direct feedback |
 | First paid offer | Optional Pro unlock: saved balance scenarios, side-by-side comparisons, CSV export, richer project planning | US$14.99 one-time, test against $9.99 | Build these additions, establish repeat use, implement/verify store billing and restore purchases |
 | Optional content | A reviewed, substantial genre toolkit with exercises, integration instructions and examples | US$4.99 per pack | Actual new original content, tested examples, clear preview of what the buyer gets |
-| Later service | Cross-device sync/team collaboration, if users ask for it repeatedly | Test $2.99/month only when ongoing value exists | Accounts, backend, conflict resolution, security, deletion/export, support and subscription management |
+| Possible hosted service later | Managed sync/team collaboration and ongoing analytics collection | Test $2.99/month only after repeat use | Self-hosted accounts/sync are included free now. Paid hosting would still need operations, recovery/support, continuous collection and verified subscriptions. |
 
 Keep the free MVP useful. Do not retroactively lock a user's existing projects or exported backups. Do not market local recombination as paid AI. Avoid ads in a coding workbench; there is no audience or evidence to justify an ad SDK in this version. Paid digital features should use the applicable store billing route, with regional program rules checked before implementation. [Apple review guidelines](https://developer.apple.com/app-store/review/guidelines/), [Google Play payments policy](https://support.google.com/googleplay/android-developer/answer/9858738?hl=en).
 
@@ -39,7 +39,7 @@ The 15% example is grounded in eligible enrolled programs, not a universal fee p
 - Google lists a US$25 one-time developer registration fee. Account verification and testing requirements also apply. [Play Console signup](https://support.google.com/googleplay/android-developer/answer/6112435?hl=en).
 - Expo Go/local development can test this MVP without a paid backend. EAS build limits and costs depend on your account/plan; inspect them before ordering builds. No paid build was requested here.
 - Budget your time for real-device tests, bug fixes, support, store assets and updates as Expo/Roblox evolve. Offline software still has maintenance costs.
-- Cloud sync or remote AI would introduce continuing service costs and additional data handling. Neither is present now.
+- The included self-hosted sync/public-data service needs a running computer or host. Public hosting, backups, abuse controls, email recovery and support would introduce continuing costs; no hosting subscription has been purchased. Remote AI is absent.
 
 ## First 30 days: a decision plan
 

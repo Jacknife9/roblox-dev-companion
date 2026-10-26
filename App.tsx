@@ -16,10 +16,12 @@ import type { Idea } from './src/core/ideas';
 import { AuthProvider, useAuth } from './src/accounts/AuthProvider';
 import { AccountPanel } from './src/accounts/AccountPanel';
 import { useSyncedWorkspace } from './src/accounts/useSyncedWorkspace';
+import { ToolsScreen } from './src/screens/ToolsScreen';
 
 const tabs: { name: string; icon: IconName; hint: string }[] = [
   { name: 'Ideas', icon: 'zap', hint: 'Find your next build' }, { name: 'Balance', icon: 'sliders', hint: 'Tune the numbers' },
   { name: 'Projects', icon: 'folder', hint: 'Keep moving' }, { name: 'Scripts', icon: 'code', hint: 'Start with a pattern' },
+  { name: 'Tools', icon: 'tool', hint: 'Build, check, launch' },
 ];
 export default function App() {
   return <ThemeProvider><AuthProvider><Root /></AuthProvider></ThemeProvider>;
@@ -48,6 +50,11 @@ function Workbench({ store, synced }: { store: ReturnType<typeof useWorkspace>; 
   const wide = useWindowDimensions().width >= 950;
   const compactHeader = useWindowDimensions().width < 450;
   function notify(text: string) { setMessage(text); }
+  function saveChecklist(title: string, tasks: string[]) {
+    const project = createProject(title, 'Launch', 'Launch checklist starter. Add checks specific to your game.', tasks);
+    store.update(w => { if (w.projects.length >= MAX_PROJECTS) throw new Error('Project limit reached. Export and remove an older project first.'); return { ...w, projects: [project, ...w.projects] }; });
+    setSelected(project.id); setTab('Projects'); notify('Launch checklist saved to Projects');
+  }
   function saveIdea(idea: Idea) {
     try {
       const p = createProject(idea.title, idea.genre, `${idea.loop}\n\nTwist: ${idea.hook}\n\nProgression: ${idea.progression}\n\nScope: ${idea.scopeNote}`, idea.tasks);
@@ -72,9 +79,9 @@ function Workbench({ store, synced }: { store: ReturnType<typeof useWorkspace>; 
       <Pressable accessibilityRole="button" accessibilityLabel="About this app" onPress={() => setAbout(!about)} style={{ padding: 12, minHeight: 44 }}><Icon name="info" /></Pressable></View>
     </View>
     {!!themeError && <ErrorMessage message={themeError} />}
-    {about && <View style={s.notice}><Body>MVP v0.2.0 · All tools are free. No in-app purchases. Not affiliated with or endorsed by Roblox Corporation. Guest projects stay on this device. Signed-in projects sync to your configured account service. Exported copies go where you choose.</Body></View>}
+    {about && <View style={s.notice}><Body>MVP v0.3.0 · All tools are free. No in-app purchases. Not affiliated with or endorsed by Roblox Corporation. Guest projects stay on this device. Signed-in projects sync to your configured account service. Exported copies go where you choose.</Body></View>}
     <View style={[s.flex, { flexDirection: 'row' }]}>
-      {wide && <View style={s.sidebar}><Text style={[ui.eyebrow, { padding: 20 }]}>YOUR WORKBENCH</Text>{nav}<View style={{ flex: 1 }} /><View style={{ padding: 20, gap: 8 }}><Icon name={auth.user ? 'cloud' : 'wifi-off'} size={18} /><Text style={ui.caption}>Made for the next idea.{`\n`}Ready when you are.</Text><Text style={ui.caption}>v0.2.0 / {auth.user ? 'connected workspace' : 'guest workspace'}</Text></View></View>}
+      {wide && <View style={s.sidebar}><Text style={[ui.eyebrow, { padding: 20 }]}>YOUR WORKBENCH</Text>{nav}<View style={{ flex: 1 }} /><View style={{ padding: 20, gap: 8 }}><Icon name={auth.user ? 'cloud' : 'wifi-off'} size={18} /><Text style={ui.caption}>Made for the next idea.{`\n`}Ready when you are.</Text><Text style={ui.caption}>v0.3.0 / {auth.user ? 'connected workspace' : 'guest workspace'}</Text></View></View>}
       <View style={s.flex}>
         <View style={s.status}><View style={[s.dot, store.saveError && { backgroundColor: color.error }]} /><Text accessibilityLiveRegion="polite" style={ui.caption}>{store.ready ? store.saveStatus : 'Opening your workspace…'}</Text></View>
         {!!synced && <View style={[s.notice, ui.spread]}><Text accessibilityLiveRegion="polite" style={[ui.caption, { flexShrink: 1 }]}>{synced.syncStatus}</Text><Button label="Sync projects" compact tone="quiet" disabled={synced.busy || !synced.ready} onPress={() => void synced.engine.sync()} /></View>}
@@ -93,6 +100,7 @@ function Workbench({ store, synced }: { store: ReturnType<typeof useWorkspace>; 
           <View style={[s.flex, tab !== 'Balance' && s.hidden]}><BalanceScreen /></View>
           <View style={[s.flex, tab !== 'Projects' && s.hidden]}><ProjectsScreen workspace={store.workspace} selectedId={selected} onSelect={setSelected} onUpdate={store.update} notify={notify} /></View>
           <View style={[s.flex, tab !== 'Scripts' && s.hidden]}><ScriptsScreen notify={notify} /></View>
+          <View style={[s.flex, tab !== 'Tools' && s.hidden]}><ToolsScreen notify={notify} saveChecklist={saveChecklist} /></View>
         </>}</View>
       </View>
     </View>

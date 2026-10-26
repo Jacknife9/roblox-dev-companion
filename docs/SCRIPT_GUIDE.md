@@ -26,7 +26,7 @@ Test malicious requests in your own Studio test session: an unknown item, a tabl
 
 ## Verification included
 
-All seven sources were syntax-compiled with the official Luau 0.744 Windows compiler. The XP module also ran eight assertions under the standalone Luau runtime. The other six templates depend on Studio's DataModel/events and still require the real Studio tests above; compilation is not evidence those game flows were played.
+All ten sources were syntax-compiled with the official Luau 0.744 Windows compiler. The XP module also ran eight assertions under the standalone Luau runtime. The other six templates depend on Studio's DataModel/events and still require the real Studio tests above; compilation is not evidence those game flows were played.
 
 If you have the official [Luau CLI release](https://github.com/luau-lang/luau/releases/tag/0.744) installed and on PATH:
 
@@ -43,3 +43,9 @@ npm.cmd test
 ```
 
 Do not install multiple copies of the shop/round scripts in one place. Keep changes on a test place until the intended behavior is verified. Session-only examples should not be presented as durable purchases.
+
+## Additional templates
+
+DataStore load/save with retries is a server-only module with protected calls, bounded exponential backoff, optimistic revision checks and idempotent retry markers. Integrate successful load gating, autosave, PlayerRemoving and BindToClose in a separate test game. Force service failures and concurrent writes; a failed load must never become a saved default. This starter is not a complete session-locking profile system.
+
+Validated ProximityPrompt checks server-observed distance, health and cooldown; add permissions for your action. UI tween is a LocalScript under a GuiButton and uses Activated for multiple input types. Test both in Studio with two players and a touch emulator/device. The ten templates were syntax-compiled; engine-dependent behavior still needs Studio tests.

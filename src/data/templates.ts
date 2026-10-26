@@ -1,8 +1,10 @@
+import { extraTemplates } from './extraTemplates';
 export type ScriptTemplate = {
   id: string; title: string; category: string; summary: string; kind: 'Script' | 'LocalScript' | 'ModuleScript';
   placement: string; setup: string; limits: string; code: string;
 };
 export const templates: ScriptTemplate[] = [
+  ...extraTemplates,
   {
     id: 'session-coins', title: 'Session leaderstats', category: 'Economy', kind: 'Script',
     summary: 'Give each player a Coins stat for a prototype economy.', placement: 'ServerScriptService → Script',

@@ -21,7 +21,7 @@ export function ScriptsScreen({ notify }: { notify: (message: string) => void })
     <PageTitle index="04 / SCRIPT SHELF" title="A useful head start." subtitle="Readable Luau templates. Clear setup. Yours to adapt in Studio." />
     <Card style={{ backgroundColor: color.pale }}><Body>Scripts run in Roblox Studio on your computer. This app helps you read, copy, and share them while planning your build.</Body></Card>
     <Field label="Search scripts" value={query} onChangeText={setQuery} placeholder="Try coins, checkpoint, or touch" autoCapitalize="none" />
-    <Chips label="Category" options={['All', 'Economy', 'Progression', 'Controls', 'Game loop']} value={category} onChange={setCategory} />
+    <Chips label="Category" options={['All', ...new Set(templates.map(t => t.category))]} value={category} onChange={setCategory} />
     <ErrorMessage message={error} />
     {selected && <Card style={{ borderTopWidth: 4, borderTopColor: color.green }}>
       <View style={ui.spread}><Pill>{selected.kind}</Pill><Button label="Close script" tone="quiet" icon="x" compact onPress={() => setSelectedId(null)} /></View>

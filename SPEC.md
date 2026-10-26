@@ -1,4 +1,4 @@
-# Roblox Dev Companion MVP — 0.1.0
+# Roblox Dev Companion MVP — 0.3.0
 
 ## Objective and assumptions
 An offline iPhone/Android workbench for people creating Roblox experiences. Expo/React Native, TypeScript, no account, AI service, analytics, or payments required for the offline tools. The user authorized autonomous implementation and packaging; spec review gates do not block the requested build. All MVP features are free. No claim of Roblox endorsement or store publication.
@@ -35,3 +35,6 @@ Use explicit TypeScript domain types, named functions, simple React state, seman
 
 ## Boundaries
 Always validate data, report save failures and run checks. Credentials/public publishing/paid services require the owner's account and intent. Never hardcode secrets, sell Robux, claim revenue, or imply official affiliation. No SDK for payments or advertising is installed.
+
+## 0.3 creator-tool extension
+The user additionally requested money/economy, scripting, publishing and public-stat tools. Add a fifth Tools tab. Numeric DevEx rates must be fetched from the official Roblox page with provenance/time and no invented fallback. Public stats use fixed official endpoints, bounded history and no Roblox credentials; only real observations are graphed. Other tools run locally, with honest heuristic/model limits. Launch tasks reuse the existing project system. The detailed behavior and assumptions are in docs/CREATOR_TOOLS.md.

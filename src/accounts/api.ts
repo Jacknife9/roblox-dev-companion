@@ -24,8 +24,9 @@ export async function request(path: string, method = 'GET', data?: unknown): Pro
   const timeout = setTimeout(() => controller.abort(), 10_000);
   try {
     const native = Platform.OS !== 'web';
-    const token = native ? await readToken() : null;
-    const response = await fetch(apiOrigin() + path, { method, signal: controller.signal, credentials: native ? 'omit' : 'include', headers: {
+    const publicTool = path.startsWith('/v1/public/');
+    const token = native && !publicTool ? await readToken() : null;
+    const response = await fetch(apiOrigin() + path, { method, signal: controller.signal, credentials: native || publicTool ? 'omit' : 'include', headers: {
       'Content-Type': 'application/json', ...(native ? { 'X-Client-Type': 'native' } : {}), ...(token ? { Authorization: `Bearer ${token}` } : {}),
     }, ...(data === undefined ? {} : { body: JSON.stringify(data) }) });
     const body = await response.json();
@@ -33,7 +34,7 @@ export async function request(path: string, method = 'GET', data?: unknown): Pro
     return body;
   } catch (e) {
     if (e instanceof ApiError) throw e;
-    throw new Error('Account service unavailable. Check the server and your connection. Offline tools still work.');
+    throw new Error('Local service unavailable. Start the included server or check your connection. Offline tools still work.');
   } finally { clearTimeout(timeout); }
 }
 export async function signIn(kind: 'signup' | 'login', email: string, password: string): Promise<User> {

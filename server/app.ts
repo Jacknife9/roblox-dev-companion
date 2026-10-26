@@ -2,6 +2,7 @@ import { createServer, type IncomingMessage, type ServerResponse } from 'node:ht
 import { DatabaseSync } from 'node:sqlite';
 import { randomBytes, randomUUID, scrypt, timingSafeEqual, createHash } from 'node:crypto';
 import { emptyWorkspace, parseBackup, serializeBackup } from '../src/storage/repository';
+import { createRobloxData, PublicDataError } from './roblox';
 
 type Options = { database: string; origins: string[]; secureCookies?: boolean; authLimit?: number; sessionMs?: number; now?: () => number };
 type UserRow = { id: string; email: string; hash: string; salt: string };
@@ -38,6 +39,7 @@ export function createAccountServer(options: Options) {
     CREATE TABLE IF NOT EXISTS workspaces(user_id TEXT PRIMARY KEY REFERENCES users(id) ON DELETE CASCADE, data TEXT NOT NULL, revision INTEGER NOT NULL DEFAULT 0);
     CREATE TABLE IF NOT EXISTS throttle(key TEXT PRIMARY KEY, attempts INTEGER NOT NULL, until_ms INTEGER NOT NULL);`);
   const now = options.now ?? Date.now;
+  const publicData = createRobloxData(db);
   let hashing = 0;
   async function hash(password: string, salt: string) {
     if (hashing >= 4) throw new HttpError(429, 'Server is busy. Try again shortly.');
@@ -101,6 +103,12 @@ export function createAccountServer(options: Options) {
       if (req.method === 'OPTIONS') { res.writeHead(204); res.end(); return; }
       const path = req.url?.split('?')[0];
       if (req.method === 'GET' && path === '/health') { send(200, { ok: true }); return; }
+      if (req.method === 'GET' && path?.startsWith('/v1/public/')) {
+        throttle(`public:${req.socket.remoteAddress}`, 120);
+        if (path === '/v1/public/devex') { send(200, await publicData.devex()); return; }
+        if (path === '/v1/public/stats') { send(200, await publicData.getStats(new URL(req.url!, 'http://localhost').searchParams)); return; }
+        throw new HttpError(404, 'Public tool not found.');
+      }
       if (req.method === 'GET' && path === '/v1/session') {
         try { const user = authenticate(req); send(200, { user: { id: user.id, email: user.email } }); }
         catch (e) { if (e instanceof HttpError && e.status === 401) send(200, { user: null }); else throw e; }
@@ -161,7 +169,7 @@ export function createAccountServer(options: Options) {
       }
       throw new HttpError(404, 'Route not found.');
     } catch (e) {
-      if (!res.headersSent) send(e instanceof HttpError ? e.status : 500, { error: e instanceof HttpError ? e.message : 'The account service could not complete this request.' });
+      if (!res.headersSent) send(e instanceof HttpError || e instanceof PublicDataError ? e.status : 500, { error: e instanceof HttpError || e instanceof PublicDataError ? e.message : 'The account service could not complete this request.' });
       else res.end();
     }
   });

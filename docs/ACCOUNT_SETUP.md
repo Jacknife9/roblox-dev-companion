@@ -41,3 +41,5 @@ Serve the web app and proxy `/v1` through one HTTPS origin to avoid cross-site c
 Before public signup, add email verification/recovery, operational monitoring, backups, abuse controls, final publisher/support/privacy details, real-device tests and a security review. There is no distributed rate limiter, email sender or public deployment configured.
 
 Stop any API on port 4174 before `npm.cmd run test:e2e`. Playwright starts an isolated in-memory API and refuses to reuse an existing one, so tests cannot touch your real account database.
+
+The same service supplies `/v1/public/devex` and `/v1/public/stats` for creator tools without signing in. Public stats observations share the SQLite file but are separate from private workspaces; see [Creator tools](CREATOR_TOOLS.md). Proxy all `/v1` routes when hosting.

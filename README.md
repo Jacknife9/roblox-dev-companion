@@ -1,6 +1,6 @@
 # Roblox Dev Companion
 
-A working Expo / React Native MVP for iPhone, Android, and a browser. Version 0.2.0. All features in this source build are free. It is an independent, unofficial tool for people building Roblox experiences.
+A working Expo / React Native MVP for iPhone, Android, and a browser. Version 0.3.0. All features in this source build are free. It is an independent, unofficial tool for people building Roblox experiences.
 
 **Start here on Windows:** install Node.js 24 LTS, extract the ZIP, open PowerShell in the extracted `roblox-dev-companion` folder, then run:
 
@@ -21,8 +21,9 @@ Install Expo Go on your phone. Keep the PC and phone on the same Wi-Fi. Scan the
 | Projects | Create/edit/delete projects, notes, phase, task add/edit/complete/delete, progress, device persistence |
 | Backups | Export/share or copy JSON, import file or pasted JSON, validation, explicit replacement confirmation, save errors and recovery |
 | Accounts | Optional email/password signup, login/logout, account deletion, per-account project sync, offline device cache and explicit conflict choices |
+| Creator tools | Robux/DevEx, price ladder, tycoon graphs, Scale converter, local script checker, image previews, listing/update helpers, launch tasks, public stats/history/CSV |
 | Appearance | Light/dark toggle, system default, saved device preference |
-| Scripts | Seven searchable Luau templates, placement/setup/limits, clipboard copy, `.luau` download or native share |
+| Scripts | Ten searchable Luau templates, placement/setup/limits, clipboard copy, `.luau` download or native share |
 
 Ideas use local curated combinations, not a remote AI model. This app does not execute Roblox scripts or replace Roblox Studio. Coins in the calculator are arbitrary in-game units, not Robux or cash.
 
@@ -40,10 +41,11 @@ npm.cmd run test:e2e
 npm.cmd run build:mobile
 ```
 
-`build:mobile` creates iOS/Android JavaScript/Hermes bundles. It does **not** create a signed APK/IPA or prove physical-device behavior. No store upload, signed native build, store purchase, or billing entitlement has been performed.
+`build:mobile` creates iOS/Android JavaScript/Hermes bundles. It does **not** create a signed APK/IPA or prove physical-device behavior. No store upload, public API hosting, signed native build, store purchase, or billing entitlement has been performed. Live DevEx/stat lookups require the included service; offline tools do not.
 
 ## Build and business documents
 
+- [Creator tools and their limits](docs/CREATOR_TOOLS.md)
 - [Accounts and sync setup](docs/ACCOUNT_SETUP.md)
 - [Windows + Expo Go instructions](docs/WINDOWS_SETUP.md)
 - [Android APK, iPhone testing, and store build instructions](docs/BUILD_AND_RELEASE.md)
@@ -56,9 +58,12 @@ npm.cmd run build:mobile
 
 ```text
 App.tsx                 Responsive shell, navigation, load/save status
-src/core/               Pure idea, calculator, project/task functions
+src/core/               Ideas, calculators, projects, creator tools and validation
+server/                 Optional Node 24 / SQLite accounts, sync and public Roblox data
+src/accounts/           Auth/session clients and tested revision-based sync engine
+src/theme/              Persisted light/dark theme
 src/storage/            Validated versioned storage and platform file handling
-src/screens/            Four working screens and project editor
+src/screens/            Five sections, project editor and creator tool panels
 src/components/         Shared accessible controls and color/spacing tokens
 src/data/templates.ts   Canonical Luau source and template metadata
 templates/              Standalone .luau copies
