@@ -1,0 +1,26 @@
+{
+  "expo": {
+    "name": "Roblox Dev Companion",
+    "slug": "roblox-dev-companion",
+    "version": "0.1.0",
+    "orientation": "default",
+    "userInterfaceStyle": "light",
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.example.devcompanion",
+      "config": {
+        "usesNonExemptEncryption": false
+      }
+    },
+    "android": {
+      "package": "com.example.devcompanion"
+    },
+    "web": {
+      "bundler": "metro",
+      "name": "Dev Companion"
+    },
+    "plugins": [
+      "expo-sharing"
+    ]
+  }
+}

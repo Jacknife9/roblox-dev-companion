@@ -1,0 +1,12 @@
+node_modules/
+.expo/
+dist/
+dist-mobile/
+coverage/
+test-results/
+playwright-report/
+.env*
+*.pem
+*.jks
+*.keystore
+credentials.json
