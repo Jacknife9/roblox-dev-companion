@@ -23,6 +23,8 @@ One runtime bug was found and fixed: React Native Web did not map `accessibility
 
 The ZIP was also extracted into a separate folder and installed with `npm ci`. That check caught Windows CRLF conversion in the template consistency test. The archive now declares LF source formatting, and the consistency check accepts equivalent Windows line endings while still comparing all script content.
 
+The 0.3.0 source ZIP was freshly extracted and installed with `npm ci`; all 60 tests and strict type checking passed again in that extracted copy. The included live-tools screenshot was captured from the user-facing browser with the real local service, without a mocked rate.
+
 ## New feature verification
 
 Browser checks also cover persisted dark mode/system default, signup and cookie session restoration, two independent clients syncing tasks, explicit guest copying, isolated logout, deletion/revocation, offline cache reload and conflict choice. Creator-tool checks exercise a changing fetched DevEx rate, proceeds/price ladders, progression graph, Scale output, local script findings, local image upload/previews, listing/update helpers, checklist tasks persisted after reload, public-stat graphs and CSV downloads. Tool layouts are checked at 320 pixels in both themes. Controlled network responses keep automated tests deterministic.
