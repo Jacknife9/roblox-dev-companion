@@ -8,5 +8,6 @@ test('search finds templates by intent and filters by category', () => {
   assert.equal(searchTemplates('zzzz').length, 0);
 });
 test('standalone Luau sources match the in-app library', () => {
-  for (const t of templates) assert.equal(readFileSync(`templates/${t.id}.luau`, 'utf8'), t.code);
+  // Both LF and CRLF are valid Luau source on Windows; compare code, not editor conventions.
+  for (const t of templates) assert.equal(readFileSync(`templates/${t.id}.luau`, 'utf8').replace(/\r\n/g, '\n'), t.code);
 });

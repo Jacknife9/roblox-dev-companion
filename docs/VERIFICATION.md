@@ -21,6 +21,8 @@ Browser flows cover: idea filters → project, task completion and notes survivi
 
 One runtime bug was found and fixed: React Native Web did not map `accessibilityState.checked` onto an ARIA checkbox state. The code now explicitly exposes `aria-checked`, and the persistence flow asserts the checked state both before and after reload. Selected/pressed controls also expose their web states.
 
+The ZIP was also extracted into a separate folder and installed with `npm ci`. That check caught Windows CRLF conversion in the template consistency test. The archive now declares LF source formatting, and the consistency check accepts equivalent Windows line endings while still comparing all script content.
+
 ## Exact rerun commands
 
 ```powershell
