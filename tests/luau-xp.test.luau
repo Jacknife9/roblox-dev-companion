@@ -1,0 +1,11 @@
+-- Optional runtime test using the official standalone Luau CLI.
+local XP = require("../templates/xp-module")
+assert(XP.required(2, 100, 1.5) == 100)
+assert(XP.required(4, 100, 1.5) == 225)
+assert(XP.total(4, 100, 1.5) == 475)
+assert(XP.total(10, 80, 1) == 720)
+assert(not pcall(XP.required, 2.5, 100, 1.25))
+assert(not pcall(XP.total, 200, 1e9, 3))
+assert(not pcall(XP.total, 10, 0, 1))
+assert(not pcall(XP.total, 10, 100, 0 / 0))
+print("PASS: 8 Luau XP runtime assertions")
