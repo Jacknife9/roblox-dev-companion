@@ -1,0 +1,11 @@
+# Accounts and project sync — 0.2.0
+
+The user requested sign-in plus project sync. Implement signup, login, session restoration, logout, account deletion, isolated local caches, revision-based sync and a saved light/dark preference. Guest projects remain independent. Importing guest projects into an account is explicit. No hosted service, email delivery or payments are configured.
+
+Trust boundaries: untrusted JSON and credentials enter an HTTP API; authenticated account IDs alone select database rows; the app validates remote workspaces before storing them. Assets are password hashes, email addresses, sessions and projects. Use parameterized SQLite queries, scrypt hashes, hashed random session tokens, expiry/revocation, body limits, auth throttling, exact browser origin allowlists and JSON-only writes. Browser sessions use HttpOnly/SameSite cookies; native sessions use SecureStore. HTTP is for local development only; external deployments require HTTPS.
+
+Sync uses whole-workspace snapshots with a server revision. PUT requires the last observed revision. A stale update returns 409 without writing. The device keeps its unsynced copy and asks which copy to retain. There is no automatic task merge. Local writes are serialized. Edits made while uploading remain dirty and upload against the acknowledged revision. Account caches are keyed by account ID; guest storage is unchanged.
+
+API: POST `/v1/auth/signup` and `/login` with `{email,password}`; GET `/v1/me`; POST `/v1/auth/logout`; POST `/v1/auth/delete` with password. GET `/v1/workspace` returns `{workspace,revision}`; PUT accepts `{workspace,baseRevision}` and returns the new snapshot. Errors are `{error}`; conflicts also include the current snapshot. Native login requests use `X-Client-Type: native` and receive a bearer token. Browsers receive only a session cookie. Sessions expire after 30 days. No email verification, password recovery, social login or account linking is provided yet.
+
+Acceptance checks: dark mode survives reload and has readable contrast; two independent clients can share projects after signing in; other accounts and guest data remain isolated; stale edits cannot silently overwrite a newer revision; offline writes persist and retry; revoked/expired sessions cannot read or write. Backend, sync engine and browser tests exercise these behaviors.

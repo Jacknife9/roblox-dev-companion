@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
 import { ScrollView, Text, View, useWindowDimensions } from 'react-native';
 import { GENRES, TEAMS, SCOPES, generateIdea, type Genre, type Team, type Scope, type Idea } from '../core/ideas';
-import { Button, Card, Body, Chips, Heading, Icon, PageTitle, Pill, color, ui } from '../components/ui';
+import { Button, Card, Body, Chips, Heading, Icon, PageTitle, Pill, useUI } from '../components/ui';
 
 export function IdeasScreen({ onSave }: { onSave: (idea: Idea) => void }) {
+  const { color, ui } = useUI();
   const [genre, setGenre] = useState<Genre>('Simulator');
   const [team, setTeam] = useState<Team>('Solo');
   const [scope, setScope] = useState<Scope>('Weekend');

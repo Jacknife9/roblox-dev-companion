@@ -1,7 +1,7 @@
 # Roblox Dev Companion MVP — 0.1.0
 
 ## Objective and assumptions
-An offline iPhone/Android workbench for people creating Roblox experiences. Expo/React Native, TypeScript, no account, backend, AI service, analytics, or payments required. The user authorized autonomous implementation and packaging; spec review gates do not block the requested build. All MVP features are free. No claim of Roblox endorsement or store publication.
+An offline iPhone/Android workbench for people creating Roblox experiences. Expo/React Native, TypeScript, no account, AI service, analytics, or payments required for the offline tools. The user authorized autonomous implementation and packaging; spec review gates do not block the requested build. All MVP features are free. No claim of Roblox endorsement or store publication.
 
 ## Capability map
 | Module | Responsibility | Depends on |
@@ -21,7 +21,7 @@ Install: `npm ci`. Start: `npm start`. Web: `npm run web`. Tests: `npm test`. Ty
 ## Structure and style
 `src/core/` pure logic; `src/data/` curated content; `src/screens/` app sections; `src/components/` shared controls; `src/storage/` persistence; `tests/` unit/integration tests; `e2e/` browser checks; `docs/` setup, verification, business and template guidance; `templates/` standalone Luau sources.
 
-Use explicit TypeScript domain types, named functions, simple React state, semantic color tokens, and validated inputs. Example: `const minutes = price / coinsPerMinute;`. Avoid a backend or generalized state framework for local data.
+Use explicit TypeScript domain types, named functions, simple React state, semantic color tokens, and validated inputs. Example: `const minutes = price / coinsPerMinute;`. The optional account backend and sync contract are documented in docs/ACCOUNTS_AND_SYNC.md. Guest data remains independent.
 
 ## Acceptance criteria / testing
 - Ideas honor genre, scope, and team filters; provide a loop, progression hook, differentiator and starter tasks. Save as a project in one action; distinguish curated combinations from AI generation.

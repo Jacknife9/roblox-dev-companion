@@ -4,13 +4,14 @@ import * as Clipboard from 'expo-clipboard';
 import { createProject, MAX_PROJECTS, projectProgress, type Project } from '../core/projects';
 import { parseBackup, serializeBackup, type Workspace } from '../storage/repository';
 import { exportText, pickBackup } from '../storage/files';
-import { Body, Button, Card, ErrorMessage, Field, Heading, Icon, PageTitle, Pill, color, ui } from '../components/ui';
+import { Body, Button, Card, ErrorMessage, Field, Heading, Icon, PageTitle, Pill, useUI } from '../components/ui';
 import { ProjectEditor } from './ProjectEditor';
 
 export function ProjectsScreen({ workspace, selectedId, onSelect, onUpdate, notify }: {
   workspace: Workspace; selectedId: string | null; onSelect: (id: string | null) => void;
   onUpdate: (fn: (previous: Workspace) => Workspace) => void; notify: (message: string) => void;
 }) {
+  const { color, ui } = useUI();
   const [creating, setCreating] = useState(false);
   const [title, setTitle] = useState('');
   const [error, setError] = useState('');
@@ -43,7 +44,7 @@ export function ProjectsScreen({ workspace, selectedId, onSelect, onUpdate, noti
     <PageTitle index="03 / YOUR WORKSPACE" title="Small steps. Playable progress." subtitle="Keep your next build moving, one useful task at a time." />
     <View style={ui.spread}><View style={ui.row}><Pill>{workspace.projects.length} PROJECT{workspace.projects.length === 1 ? '' : 'S'}</Pill><Text style={ui.caption}>{taskCount} open tasks</Text></View><Button label="New project" icon="plus" onPress={() => setCreating(!creating)} /></View>
     {creating && <Card><Heading small>Start a project</Heading><Field label="New project name" value={title} onChangeText={setTitle} maxLength={100} placeholder="Your next game" onSubmitEditing={addProject} /><View style={ui.wrap}><Button label="Create project" onPress={addProject} /><Button label="Cancel" tone="secondary" onPress={() => setCreating(false)} /></View></Card>}
-    {!workspace.projects.length && !creating && <Card style={{ alignItems: 'center', paddingVertical: 36 }}><Icon name="folder" size={38} tint={color.green} /><Heading>A clean slate.</Heading><Body muted>Create a project or save a concept from Ideas. Your projects stay on this device.</Body><Button label="Create your first project" icon="plus" tone="secondary" onPress={() => setCreating(true)} /></Card>}
+    {!workspace.projects.length && !creating && <Card style={{ alignItems: 'center', paddingVertical: 36 }}><Icon name="folder" size={38} tint={color.green} /><Heading>A clean slate.</Heading><Body muted>Create a project or save a concept from Ideas. Guest projects stay here; account projects can sync.</Body><Button label="Create your first project" icon="plus" tone="secondary" onPress={() => setCreating(true)} /></Card>}
     {project && <ProjectEditor key={project.id} project={project} onChange={changeProject} onClose={() => onSelect(null)} onDelete={() => void act(() => {
       onUpdate(previous => ({ ...previous, projects: previous.projects.filter(p => p.id !== project.id) })); onSelect(null); notify('Project deleted');
     })} />}
@@ -66,10 +67,10 @@ export function ProjectsScreen({ workspace, selectedId, onSelect, onUpdate, noti
       <Button label={paste ? 'Hide backup text' : 'Restore from pasted text'} tone="quiet" onPress={() => setPaste(!paste)} />
       {paste && <><Field label="Backup JSON" multiline value={backupText} onChangeText={setBackupText} maxLength={1_000_001} autoCapitalize="none" autoCorrect={false} placeholder="Paste a Dev Companion backup" /><Button label="Validate backup" tone="secondary" onPress={() => void act(() => setPending(parseBackup(backupText)))} /></>}
       {pending && <View style={{ backgroundColor: color.pale, borderRadius: 10, padding: 16, gap: 12 }}>
-        <Heading small>Replace projects on this device?</Heading><Body>This backup contains {pending.projects.length} projects. Replacing removes your current {workspace.projects.length} projects. Export them first if you need them.</Body>
+        <Heading small>Replace projects in this workspace?</Heading><Body>This backup contains {pending.projects.length} projects. Replacing removes your current {workspace.projects.length} projects. Export them first if you need them. In an account workspace, the replacement also syncs.</Body>
         <View style={ui.wrap}><Button label="Replace projects" onPress={() => void act(() => { onUpdate(() => pending); setPending(null); onSelect(null); setBackupText(''); notify('Backup restored'); })} /><Button label="Cancel restore" tone="secondary" onPress={() => setPending(null)} /></View>
       </View>}
-      <Text style={ui.caption}>No account, cloud sync, ads, or analytics. Up to 100 projects and 200 tasks per project, within a 1 MB text backup limit.</Text>
+      <Text style={ui.caption}>Optional accounts sync to your configured service. No ads or analytics. Up to 100 projects and 200 tasks per project, within a 1 MB text backup limit.</Text>
     </Card>
   </ScrollView>;
 }

@@ -2,19 +2,19 @@ import React from 'react';
 import { Pressable, StyleSheet, Text, TextInput, View, type TextInputProps, type ViewStyle } from 'react-native';
 import Feather from '@expo/vector-icons/Feather';
 
-export const color = {
-  paper: '#f4f6f1', surface: '#ffffff', ink: '#172e29', muted: '#53685f', line: '#dbe3d8',
-  green: '#245340', lime: '#d6ef9b', pale: '#e8efdf', error: '#a33127', errorBg: '#fff0eb',
-};
+import { useTheme } from '../theme/ThemeProvider';
+import { palettes, type Palette } from '../theme/palette';
 export type IconName = React.ComponentProps<typeof Feather>['name'];
-export function Icon({ name, size = 20, tint = color.ink }: { name: IconName; size?: number; tint?: string }) {
-  return <Feather name={name} size={size} color={tint} accessible={false} />;
+export function Icon({ name, size = 20, tint }: { name: IconName; size?: number; tint?: string }) {
+  const { color, ui } = useUI();
+  return <Feather name={name} size={size} color={tint ?? color.ink} accessible={false} />;
 }
 export function Button({ label, onPress, icon, tone = 'primary', disabled = false, compact = false }: {
   label: string; onPress: () => void; icon?: IconName; tone?: 'primary' | 'secondary' | 'danger' | 'quiet'; disabled?: boolean; compact?: boolean;
 }) {
+  const { color, ui } = useUI();
   const filled = tone === 'primary';
-  const tint = filled ? '#ffffff' : tone === 'danger' ? color.error : color.ink;
+  const tint = filled ? color.onPrimary : tone === 'danger' ? color.error : color.ink;
   return <Pressable accessibilityRole="button" accessibilityLabel={label} accessibilityState={{ disabled }} aria-disabled={disabled} disabled={disabled} onPress={onPress}
     style={({ pressed }) => [ui.button, filled && { backgroundColor: color.green, borderColor: color.green },
       tone === 'quiet' && { backgroundColor: 'transparent', borderColor: 'transparent' }, compact && { paddingHorizontal: 12 },
@@ -23,15 +23,19 @@ export function Button({ label, onPress, icon, tone = 'primary', disabled = fals
   </Pressable>;
 }
 export function Card({ children, style }: { children: React.ReactNode; style?: ViewStyle }) {
+  const { color, ui } = useUI();
   return <View style={[ui.card, style]}>{children}</View>;
 }
 export function Heading({ children, small = false }: { children: React.ReactNode; small?: boolean }) {
+  const { color, ui } = useUI();
   return <Text accessibilityRole="header" style={small ? ui.h3 : ui.h2}>{children}</Text>;
 }
 export function Body({ children, muted = false }: { children: React.ReactNode; muted?: boolean }) {
+  const { color, ui } = useUI();
   return <Text style={[ui.body, muted && { color: color.muted }]}>{children}</Text>;
 }
 export function Field({ label, hint, ...props }: TextInputProps & { label: string; hint?: string }) {
+  const { color, ui } = useUI();
   return <View style={ui.field}><Text style={ui.label}>{label}</Text>
     <TextInput {...props} accessibilityLabel={label} placeholderTextColor={color.muted}
       style={[ui.input, props.multiline && { minHeight: 100, textAlignVertical: 'top' }, props.style]} />
@@ -39,25 +43,29 @@ export function Field({ label, hint, ...props }: TextInputProps & { label: strin
   </View>;
 }
 export function Chips<T extends string>({ label, options, value, onChange }: { label: string; options: readonly T[]; value: T; onChange: (value: T) => void }) {
+  const { color, ui } = useUI();
   return <View style={ui.field}><Text style={ui.label}>{label}</Text><View style={ui.wrap}>
     {options.map(option => <Pressable key={option} accessibilityRole="button" accessibilityLabel={`${label}: ${option}`}
       accessibilityState={{ selected: option === value }} aria-pressed={option === value} onPress={() => onChange(option)}
       style={({ pressed }) => [ui.chip, option === value && { backgroundColor: color.ink, borderColor: color.ink }, pressed && { opacity: 0.7 }]}>
-      <Text style={[ui.chipText, option === value && { color: '#fff' }]}>{option}</Text>
+      <Text style={[ui.chipText, option === value && { color: color.onSelected }]}>{option}</Text>
     </Pressable>)}
   </View></View>;
 }
 export function Pill({ children }: { children: React.ReactNode }) {
+  const { color, ui } = useUI();
   return <View style={ui.pill}><Text style={ui.pillText}>{children}</Text></View>;
 }
 export function ErrorMessage({ message }: { message: string }) {
+  const { color, ui } = useUI();
   if (!message) return null;
   return <View accessibilityRole="alert" style={ui.error}><Icon name="alert-circle" tint={color.error} /><Text style={[ui.body, { color: color.error, flex: 1 }]}>{message}</Text></View>;
 }
 export function PageTitle({ index, title, subtitle }: { index: string; title: string; subtitle: string }) {
+  const { color, ui } = useUI();
   return <View style={ui.pageTitle}><Text style={ui.eyebrow}>{index}</Text><Text accessibilityRole="header" style={ui.h1}>{title}</Text><Body muted>{subtitle}</Body></View>;
 }
-export const ui = StyleSheet.create({
+const createStyles = (color: Palette) => StyleSheet.create({
   screen: { padding: 24, gap: 24, paddingBottom: 40, width: '100%', maxWidth: 1120, alignSelf: 'center' },
   pageTitle: { gap: 8, marginBottom: 4 }, eyebrow: { color: color.green, fontSize: 11, fontWeight: '800', letterSpacing: 1.8 },
   h1: { color: color.ink, fontSize: 32, lineHeight: 38, fontWeight: '800', letterSpacing: -1 },
@@ -76,5 +84,8 @@ export const ui = StyleSheet.create({
   pill: { alignSelf: 'flex-start', backgroundColor: color.pale, borderRadius: 6, paddingVertical: 5, paddingHorizontal: 9 },
   pillText: { color: color.green, fontSize: 11, fontWeight: '800', letterSpacing: 0.4 },
   divider: { height: 1, backgroundColor: color.line }, error: { flexDirection: 'row', alignItems: 'flex-start', gap: 10, padding: 16, backgroundColor: color.errorBg, borderRadius: 10 },
-  code: { color: '#e4f1dc', fontFamily: 'monospace', fontSize: 12, lineHeight: 21 },
+  code: { color: color.codeText, fontFamily: 'monospace', fontSize: 12, lineHeight: 21 },
 });
+
+const styles = { light: createStyles(palettes.light), dark: createStyles(palettes.dark) };
+export function useUI() { const theme = useTheme(); return { ...theme, ui: styles[theme.mode] }; }

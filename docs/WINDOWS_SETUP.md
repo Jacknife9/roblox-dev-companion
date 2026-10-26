@@ -33,7 +33,7 @@ Expo's [project setup guide](https://docs.expo.dev/get-started/create-a-project/
 - **Projects:** complete a task, edit notes, press Save project details. Reload and reopen the project. Create a manual project and add your own tasks.
 - **Balance:** base XP 100, growth 1.5, target level 4 → Calculate curve. Total is 475 XP. Upgrade cost 50, growth 2, purchases 3, income 25 gives 350 coins and 14 minutes.
 - **Scripts:** open XP curve module or Session leaderstats, read Where it goes, then Copy code. On a computer, paste it into the correct script type in Roblox Studio. Share .luau lets you move a source file from your phone.
-- **Backups:** in Projects, export a backup using Files/Drive/another share target of your choice. Import checks a backup before asking to replace your current workspace. Devices do not sync automatically.
+- **Backups:** in Projects, export a backup using Files/Drive/another share target of your choice. Import checks a backup before asking to replace your current workspace. Guest devices do not sync automatically. Optional accounts can sync; see [Account setup](ACCOUNT_SETUP.md).
 
 ## Browser preview on Windows
 

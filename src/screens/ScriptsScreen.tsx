@@ -3,9 +3,10 @@ import { Platform, ScrollView, Text, View } from 'react-native';
 import * as Clipboard from 'expo-clipboard';
 import { searchTemplates, templates } from '../data/templates';
 import { exportText } from '../storage/files';
-import { Body, Button, Card, Chips, ErrorMessage, Field, Heading, PageTitle, Pill, color, ui } from '../components/ui';
+import { Body, Button, Card, Chips, ErrorMessage, Field, Heading, PageTitle, Pill, useUI } from '../components/ui';
 
 export function ScriptsScreen({ notify }: { notify: (message: string) => void }) {
+  const { color, ui } = useUI();
   const [query, setQuery] = useState('');
   const [category, setCategory] = useState('All');
   const [selectedId, setSelectedId] = useState<string | null>(null);
@@ -30,7 +31,7 @@ export function ScriptsScreen({ notify }: { notify: (message: string) => void })
       <View style={{ gap: 8 }}><Text style={ui.eyebrow}>BEFORE YOU SHIP</Text><Body muted>{selected.limits}</Body></View>
       <View style={ui.wrap}><Button label="Copy code" icon="copy" onPress={() => void act(async () => { await Clipboard.setStringAsync(selected.code); notify('Script copied'); })} />
         <Button label={Platform.OS === 'web' ? 'Download .luau' : 'Share .luau'} icon="share" tone="secondary" onPress={() => void act(() => exportText(`${selected.id}.luau`, selected.code, 'text/plain'))} /></View>
-      <ScrollView horizontal style={{ backgroundColor: '#172e29', borderRadius: 10 }} contentContainerStyle={{ padding: 16 }}>
+      <ScrollView horizontal style={{ backgroundColor: color.codeSurface, borderRadius: 10 }} contentContainerStyle={{ padding: 16 }}>
         <Text selectable style={ui.code}>{selected.code}</Text>
       </ScrollView>
     </Card>}

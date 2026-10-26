@@ -1,6 +1,6 @@
 # Roblox Dev Companion
 
-A working offline Expo / React Native MVP for iPhone, Android, and a browser. Version 0.1.0. All features in this source build are free. It is an independent, unofficial tool for people building Roblox experiences.
+A working Expo / React Native MVP for iPhone, Android, and a browser. Version 0.2.0. All features in this source build are free. It is an independent, unofficial tool for people building Roblox experiences.
 
 **Start here on Windows:** install Node.js 24 LTS, extract the ZIP, open PowerShell in the extracted `roblox-dev-companion` folder, then run:
 
@@ -20,6 +20,8 @@ Install Expo Go on your phone. Keep the PC and phone on the same Wi-Fi. Scan the
 | Balance | XP curves with cumulative rounded requirements, upgrade costs and earning time, coin faucet/sink model, input limits and errors |
 | Projects | Create/edit/delete projects, notes, phase, task add/edit/complete/delete, progress, device persistence |
 | Backups | Export/share or copy JSON, import file or pasted JSON, validation, explicit replacement confirmation, save errors and recovery |
+| Accounts | Optional email/password signup, login/logout, account deletion, per-account project sync, offline device cache and explicit conflict choices |
+| Appearance | Light/dark toggle, system default, saved device preference |
 | Scripts | Seven searchable Luau templates, placement/setup/limits, clipboard copy, `.luau` download or native share |
 
 Ideas use local curated combinations, not a remote AI model. This app does not execute Roblox scripts or replace Roblox Studio. Coins in the calculator are arbitrary in-game units, not Robux or cash.
@@ -42,6 +44,7 @@ npm.cmd run build:mobile
 
 ## Build and business documents
 
+- [Accounts and sync setup](docs/ACCOUNT_SETUP.md)
 - [Windows + Expo Go instructions](docs/WINDOWS_SETUP.md)
 - [Android APK, iPhone testing, and store build instructions](docs/BUILD_AND_RELEASE.md)
 - [Monetization proposal and explicit revenue assumptions](docs/MONETIZATION.md)
@@ -67,7 +70,7 @@ assets/                 Original terminal icon (no Roblox logo)
 
 The app uses Expo SDK 57, React 19.2.3 and React Native 0.86.3. `package-lock.json` pins the dependency tree. SDK 57 follows [Expo's current physical-device Expo Go recommendation during the SDK 58 transition](https://docs.expo.dev/get-started/create-a-project/) as checked October 26, 2026. Expo Go compatibility changes; check the setup guide if your installed version differs.
 
-Project data stays on each device/browser. There is no automatic cloud sync. Closing an unsaved project-details form discards its draft; press **Save project details** for names, notes and phase. Task changes save immediately. Export a backup before uninstalling or clearing app/browser storage. Never put credentials into project notes or scripts you share.
+Guest projects stay on each device/browser. Signed-in projects sync to the configured account service. Run `npm.cmd run server` in another terminal to try local accounts. See the account setup guide for phone access and HTTPS hosting. Closing an unsaved project-details form discards its draft; press **Save project details** for names, notes and phase. Task changes save immediately. Export a backup before uninstalling or clearing app/browser storage. Never put credentials into project notes or scripts you share.
 
 The dependency audit currently reports Expo tooling advisories; their affected packages and release implications are recorded in [VERIFICATION.md](docs/VERIFICATION.md). This is a tested MVP, not a statement of production security approval or a promise of revenue.
 

@@ -10,3 +10,7 @@ playwright-report/
 *.jks
 *.keystore
 credentials.json
+server/data/
+*.sqlite
+*.sqlite-shm
+*.sqlite-wal

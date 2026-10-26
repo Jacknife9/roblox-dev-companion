@@ -1,12 +1,13 @@
 import React, { useState } from 'react';
 import { ScrollView, Text, View } from 'react-native';
 import { xpCurve, upgradeCurve, economyBalance, parseNumber } from '../core/calculators';
-import { Body, Button, Card, Chips, ErrorMessage, Field, Heading, PageTitle, color, ui } from '../components/ui';
+import { Body, Button, Card, Chips, ErrorMessage, Field, Heading, PageTitle, useUI } from '../components/ui';
 
 const modes = ['XP curve', 'Upgrade costs', 'Economy'] as const;
 const fmt = (n: number) => n.toLocaleString('en-US', { maximumFractionDigits: 2 });
 type Row = { label: string; amount: number; total: number; minutes?: number };
 export function BalanceScreen() {
+  const { color, ui } = useUI();
   const [mode, setMode] = useState<typeof modes[number]>('XP curve');
   return <ScrollView keyboardShouldPersistTaps="handled" contentContainerStyle={ui.screen}>
     <PageTitle index="02 / GAME BALANCE" title="Make the numbers feel right." subtitle="Model the grind before your players have to live it." />
@@ -16,6 +17,7 @@ export function BalanceScreen() {
   </ScrollView>;
 }
 function Curve({ upgrade }: { upgrade: boolean }) {
+  const { color, ui } = useUI();
   const [base, setBase] = useState(upgrade ? '50' : '100');
   const [growth, setGrowth] = useState('1.25');
   const [count, setCount] = useState('10');
@@ -64,6 +66,7 @@ function Curve({ upgrade }: { upgrade: boolean }) {
   </>;
 }
 function Economy() {
+  const { color, ui } = useUI();
   const [earned, setEarned] = useState('20');
   const [spent, setSpent] = useState('12');
   const [duration, setDuration] = useState('30');

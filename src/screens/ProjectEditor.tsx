@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
 import { Pressable, Text, View } from 'react-native';
 import { addTask, deleteTask, editProject, editTask, PHASES, projectProgress, toggleTask, type Project, type Task } from '../core/projects';
-import { Body, Button, Card, Chips, ErrorMessage, Field, Heading, Icon, color, ui } from '../components/ui';
+import { Body, Button, Card, Chips, ErrorMessage, Field, Heading, Icon, useUI } from '../components/ui';
 
 export function ProjectEditor({ project, onChange, onDelete, onClose }: { project: Project; onChange: (next: Project) => void; onDelete: () => void; onClose: () => void }) {
+  const { color, ui } = useUI();
   const [title, setTitle] = useState(project.title);
   const [notes, setNotes] = useState(project.notes);
   const [phase, setPhase] = useState(project.phase);
@@ -29,11 +30,12 @@ export function ProjectEditor({ project, onChange, onDelete, onClose }: { projec
     <Button label="Add task" icon="plus" tone="secondary" onPress={() => act(() => { onChange(addTask(project, taskTitle)); setTaskTitle(''); })} />
     <ErrorMessage message={error} />
     <View style={ui.divider} />
-    {confirmDelete ? <View style={{ gap: 12 }}><Body>Delete “{project.title}” and all its tasks from this device?</Body><View style={ui.wrap}><Button label="Delete permanently" tone="danger" onPress={onDelete} /><Button label="Keep project" tone="secondary" onPress={() => setConfirmDelete(false)} /></View></View>
+    {confirmDelete ? <View style={{ gap: 12 }}><Body>Delete “{project.title}” and all its tasks? In an account workspace, this deletion also syncs to other devices.</Body><View style={ui.wrap}><Button label="Delete permanently" tone="danger" onPress={onDelete} /><Button label="Keep project" tone="secondary" onPress={() => setConfirmDelete(false)} /></View></View>
       : <Button label="Delete project" icon="trash-2" tone="danger" onPress={() => setConfirmDelete(true)} />}
   </Card>;
 }
 function TaskRow({ task, onToggle, onEdit, onDelete }: { task: Task; onToggle: () => void; onEdit: (title: string) => void; onDelete: () => void }) {
+  const { color, ui } = useUI();
   const [editing, setEditing] = useState(false);
   const [draft, setDraft] = useState(task.title);
   return <View style={{ paddingVertical: 8, borderBottomWidth: 1, borderColor: color.line, gap: 8 }}>
