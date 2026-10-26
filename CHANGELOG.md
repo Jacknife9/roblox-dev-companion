@@ -1,5 +1,16 @@
 # Changelog
 
+## 0.5.0 — 2026-10-26
+
+- New look: electric indigo + lime theme in light and dark, bolder headings, rounded cards with depth, pill chips, accent-marked navigation.
+- Roblox Studio plugin (`studio-plugin/`): scans every script in a place with the app's checker, jumps to the flagged line, and inserts the ten starter templates with undo. Build with `npm run build:plugin`; see docs/STUDIO_PLUGIN.md.
+- Tools → Money: gamepass & developer product revenue planner.
+- Tools → Tycoon: steal-game unit roster with payback times and weaker-unit flags.
+
+## 0.4.0 — 2026-10-26
+
+- Script checker now also flags `while true do` loops with no visible yield/break/return, `Instance.new` with a parent argument, and deprecated `:connect()`, `:disconnect()` and `:Remove()`.
+
 ## 0.3.0 — 2026-10-26
 
 - Added Tools: Robux proceeds and fetched official DevEx categories, spaced offer ladders, tycoon/rebirth/loss progression graphs.

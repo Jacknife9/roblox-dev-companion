@@ -19,10 +19,10 @@ test('theme follows the system, toggles, and persists through reload across scre
   for (const tab of ['Ideas', 'Balance', 'Projects', 'Scripts']) {
     await page.getByRole('tab', { name: tab, exact: true }).click();
     const input = page.getByRole('textbox').first();
-    if (await input.count()) await expect(input).toHaveCSS('color', 'rgb(232, 241, 233)');
+    if (await input.count()) await expect(input).toHaveCSS('color', 'rgb(238, 240, 255)');
   }
   await page.getByRole('button', { name: 'Sign in or create account', exact: true }).click();
-  await expect(page.getByRole('textbox', { name: 'Email address', exact: true })).toHaveCSS('background-color', 'rgb(25, 39, 34)');
+  await expect(page.getByRole('textbox', { name: 'Email address', exact: true })).toHaveCSS('background-color', 'rgb(20, 23, 43)');
   for (const width of [320, 390, 768, 1280]) {
     await page.setViewportSize({ width, height: 844 });
     const heading = await page.getByRole('heading', { name: 'Bring your builds with you.', exact: true }).boundingBox();

@@ -67,7 +67,7 @@ function Workbench({ store, synced }: { store: ReturnType<typeof useWorkspace>; 
   }
   const nav = <View style={wide ? s.sideNav : s.bottomNav}>
     {tabs.map(t => <Pressable key={t.name} accessibilityRole="tab" accessibilityLabel={t.name} accessibilityState={{ selected: tab === t.name }} aria-selected={tab === t.name}
-      onPress={() => { setTab(t.name); setAccountOpen(false); setMessage(''); setError(''); }} style={({ pressed }) => [wide ? s.sideTab : s.bottomTab, tab === t.name && !accountOpen && { backgroundColor: wide ? color.pale : color.paper }, pressed && { opacity: 0.6 }]}>
+      onPress={() => { setTab(t.name); setAccountOpen(false); setMessage(''); setError(''); }} style={({ pressed }) => [wide ? s.sideTab : s.bottomTab, tab === t.name && !accountOpen && (wide ? { backgroundColor: color.pale, borderLeftWidth: 4, borderColor: color.green } : { backgroundColor: color.pale }), pressed && { opacity: 0.6 }]}>
       <Icon name={t.icon} tint={tab === t.name ? color.green : color.muted} size={21} />
       <View style={{ gap: 3 }}><Text style={{ color: tab === t.name ? color.ink : color.muted, fontSize: wide ? 14 : 11, fontWeight: '700', textAlign: wide ? 'left' : 'center' }}>{t.name}</Text>
         {wide && <Text style={ui.caption}>{t.hint}</Text>}</View>
@@ -79,9 +79,9 @@ function Workbench({ store, synced }: { store: ReturnType<typeof useWorkspace>; 
       <Pressable accessibilityRole="button" accessibilityLabel="About this app" onPress={() => setAbout(!about)} style={{ padding: 12, minHeight: 44 }}><Icon name="info" /></Pressable></View>
     </View>
     {!!themeError && <ErrorMessage message={themeError} />}
-    {about && <View style={s.notice}><Body>MVP v0.3.0 · All tools are free. No in-app purchases. Not affiliated with or endorsed by Roblox Corporation. Guest projects stay on this device. Signed-in projects sync to your configured account service. Exported copies go where you choose.</Body></View>}
+    {about && <View style={s.notice}><Body>v0.5.0 · All tools are free. No in-app purchases. Not affiliated with or endorsed by Roblox Corporation. Guest projects stay on this device. Signed-in projects sync to your configured account service. Exported copies go where you choose.</Body></View>}
     <View style={[s.flex, { flexDirection: 'row' }]}>
-      {wide && <View style={s.sidebar}><Text style={[ui.eyebrow, { padding: 20 }]}>YOUR WORKBENCH</Text>{nav}<View style={{ flex: 1 }} /><View style={{ padding: 20, gap: 8 }}><Icon name={auth.user ? 'cloud' : 'wifi-off'} size={18} /><Text style={ui.caption}>Made for the next idea.{`\n`}Ready when you are.</Text><Text style={ui.caption}>v0.3.0 / {auth.user ? 'connected workspace' : 'guest workspace'}</Text></View></View>}
+      {wide && <View style={s.sidebar}><Text style={[ui.eyebrow, { padding: 20 }]}>YOUR WORKBENCH</Text>{nav}<View style={{ flex: 1 }} /><View style={{ padding: 20, gap: 8 }}><Icon name={auth.user ? 'cloud' : 'wifi-off'} size={18} /><Text style={ui.caption}>Made for the next idea.{`\n`}Ready when you are.</Text><Text style={ui.caption}>v0.5.0 / {auth.user ? 'connected workspace' : 'guest workspace'}</Text></View></View>}
       <View style={s.flex}>
         <View style={s.status}><View style={[s.dot, store.saveError && { backgroundColor: color.error }]} /><Text accessibilityLiveRegion="polite" style={ui.caption}>{store.ready ? store.saveStatus : 'Opening your workspace…'}</Text></View>
         {!!synced && <View style={[s.notice, ui.spread]}><Text accessibilityLiveRegion="polite" style={[ui.caption, { flexShrink: 1 }]}>{synced.syncStatus}</Text><Button label="Sync projects" compact tone="quiet" disabled={synced.busy || !synced.ready} onPress={() => void synced.engine.sync()} /></View>}
@@ -110,14 +110,14 @@ function Workbench({ store, synced }: { store: ReturnType<typeof useWorkspace>; 
 const createStyles = (color: Palette) => StyleSheet.create({
   safe: { flex: 1, backgroundColor: color.paper }, flex: { flex: 1, minHeight: 0 }, hidden: { display: 'none' },
   header: { minHeight: 80, backgroundColor: color.surface, borderBottomWidth: 1, borderColor: color.line, paddingHorizontal: 12, paddingVertical: 12, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', gap: 8 },
-  logo: { width: 40, height: 40, backgroundColor: color.brand, borderRadius: 10, alignItems: 'center', justifyContent: 'center' },
-  brand: { color: color.ink, fontWeight: '800', fontSize: 13, letterSpacing: 0.5 },
+  logo: { width: 42, height: 42, backgroundColor: color.brand, borderRadius: 13, alignItems: 'center', justifyContent: 'center' },
+  brand: { color: color.ink, fontWeight: '900', fontSize: 15, letterSpacing: 1 },
   sidebar: { width: 236, backgroundColor: color.surface, borderRightWidth: 1, borderColor: color.line },
-  sideNav: { gap: 8, padding: 12 }, sideTab: { minHeight: 64, padding: 12, borderRadius: 10, flexDirection: 'row', alignItems: 'center', gap: 12 },
+  sideNav: { gap: 8, padding: 12 }, sideTab: { minHeight: 64, padding: 12, borderRadius: 14, flexDirection: 'row', alignItems: 'center', gap: 12 },
   bottomNav: { flexDirection: 'row', backgroundColor: color.surface, borderTopWidth: 1, borderColor: color.line, padding: 6, gap: 4 },
-  bottomTab: { minHeight: 58, flex: 1, gap: 5, alignItems: 'center', justifyContent: 'center', borderRadius: 10 },
+  bottomTab: { minHeight: 58, flex: 1, gap: 5, alignItems: 'center', justifyContent: 'center', borderRadius: 16 },
   status: { minHeight: 36, paddingHorizontal: 24, flexDirection: 'row', gap: 8, alignItems: 'center' },
-  dot: { height: 6, width: 6, backgroundColor: color.green, borderRadius: 3 },
+  dot: { height: 8, width: 8, backgroundColor: color.green, borderRadius: 4 },
   notice: { backgroundColor: color.pale, padding: 16, gap: 8 },
 });
 

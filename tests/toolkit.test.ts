@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { robuxProceeds, priceLadder, tycoonCurve, offsetToScale, listingCheck, updateLog, truncate } from '../src/core/toolkit';
+import { robuxProceeds, priceLadder, tycoonCurve, offsetToScale, listingCheck, updateLog, truncate, unitRoster, revenuePlan } from '../src/core/toolkit';
 test('Robux share rounds down once and validates whole prices', () => {
   assert.deepEqual(robuxProceeds(99), { kept: 69, deducted: 30 }); assert.equal(robuxProceeds(100, 60).kept, 60);
   assert.throws(() => robuxProceeds(1.5)); assert.throws(() => robuxProceeds(NaN));
@@ -26,4 +26,16 @@ test('listing helper counts emoji as characters and flags missing/repeated terms
 test('update logs normalize bullets and reject empty or oversized input', () => {
   assert.match(updateLog(3, '- New map\n* Fixed lobby', 'Fire'), /^UPDATE 3 🔥\n\n• New map\n• Fixed lobby/);
   assert.throws(() => updateLog(0, 'x', 'Clean')); assert.throws(() => updateLog(3, ' \n ', 'Fire'));
+});
+test('unit roster sorts by cost, computes payback and flags units weaker than cheaper ones', () => {
+  const r = unitRoster('Rare, 1000, 20\nCommon, 100, 5\nEpic, 5000, 15', 10, 60);
+  assert.deepEqual(r.map(u => u.name), ['Common', 'Rare', 'Epic']); assert.deepEqual(r.map(u => u.payback), [20, 50, 5000 / 15]);
+  assert.deepEqual(r.map(u => u.flag), ['On target', 'On target', 'Weaker than a cheaper unit']);
+  assert.equal(unitRoster('A, 10, 5', 10, 60)[0]!.flag, 'Pays back too fast');
+  assert.throws(() => unitRoster('A, 10', 1, 60)); assert.throws(() => unitRoster('A, -1, 5', 1, 60));
+});
+test('revenue plan uses kept Robux per sale and sums daily/monthly', () => {
+  const p = revenuePlan('VIP, 100, 1\n2x Cash, 199, 0.5', 1000);
+  assert.deepEqual(p.offers.map(o => o.dailyRobux), [10 * 70, 5 * 139]); assert.equal(p.daily, 1395); assert.equal(p.monthly, 41850);
+  assert.throws(() => revenuePlan('VIP, 100, 101', 1000)); assert.throws(() => revenuePlan('VIP, 1.5, 1', 1000));
 });

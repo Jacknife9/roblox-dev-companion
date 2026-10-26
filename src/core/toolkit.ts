@@ -57,3 +57,38 @@ export function updateLog(version: number, bullets: string, style: 'Fire' | 'Cle
   if (!lines.length || lines.length > 30) throw new Error('Enter 1 to 30 update bullet points.');
   return `UPDATE ${version}${style === 'Fire' ? ' 🔥' : ''}\n\n${lines.map(s => `• ${s}`).join('\n')}\n\nThanks for playing!`;
 }
+// "Name, a, b" lines → rows. Shared by the unit roster and revenue planner.
+function parseRows(text: string, max: number, columns: string) {
+  const lines = text.split(/\r?\n/).map(s => s.trim()).filter(Boolean);
+  if (!lines.length || lines.length > max) throw new Error(`Enter 1 to ${max} lines.`);
+  return lines.map((line, i) => {
+    const parts = line.split(',').map(s => s.trim()), [name, a, b] = [parts[0]!, Number(parts[1]), Number(parts[2])];
+    if (parts.length !== 3 || !name || name.length > 60 || !Number.isFinite(a) || !Number.isFinite(b)) throw new Error(`Line ${i + 1}: use "${columns}".`);
+    return { name, a, b };
+  });
+}
+export type Unit = { name: string; cost: number; income: number; payback: number; flag: string };
+export function unitRoster(text: string, minPayback: number, maxPayback: number): Unit[] {
+  finite(minPayback, 'Minimum payback', 0, 31_536_000); finite(maxPayback, 'Maximum payback', 1, 31_536_000);
+  if (minPayback >= maxPayback) throw new Error('Minimum payback must be below maximum.');
+  const rows = parseRows(text, 60, 'Name, cost, income per second').sort((x, y) => x.a - y.a);
+  let best = 0;
+  return rows.map(({ name, a: cost, b: income }) => {
+    if (cost <= 0 || cost > 1e18 || income <= 0 || income > 1e15) throw new Error(`${name}: cost and income must be positive.`);
+    const payback = cost / income;
+    const flag = income <= best ? 'Weaker than a cheaper unit' : payback < minPayback ? 'Pays back too fast' : payback > maxPayback ? 'Pays back too slow' : 'On target';
+    best = Math.max(best, income);
+    return { name, cost, income, payback, flag };
+  });
+}
+export type Offer = { name: string; price: number; kept: number; buyersPercent: number; dailyBuys: number; dailyRobux: number };
+export function revenuePlan(text: string, dailyPlayers: number, creatorPercent = 70) {
+  finite(dailyPlayers, 'Daily players', 1, 1e8); if (!Number.isInteger(dailyPlayers)) throw new Error('Daily players must be a whole number.');
+  const offers: Offer[] = parseRows(text, 30, 'Name, price, % of daily players who buy').map(({ name, a: price, b: buyersPercent }) => {
+    finite(buyersPercent, `${name} buyers percent`, 0, 100);
+    const { kept } = robuxProceeds(price, creatorPercent), dailyBuys = dailyPlayers * buyersPercent / 100;
+    return { name, price, kept, buyersPercent, dailyBuys, dailyRobux: dailyBuys * kept };
+  });
+  const daily = offers.reduce((sum, o) => sum + o.dailyRobux, 0);
+  return { offers, daily, monthly: daily * 30 };
+}

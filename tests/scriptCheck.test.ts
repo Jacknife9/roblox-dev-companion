@@ -14,3 +14,12 @@ test('remote checker flags client-controlled values and always prompts a server-
   assert.equal(checkScript('remote.OnServerEvent:Connect(function(player, action)\n if typeof(action) ~= "string" then return end\nend)')[0]?.rule, 'RemoteEvent review');
   assert.throws(() => checkScript('')); assert.throws(() => checkScript('x'.repeat(100_001)));
 });
+test('checker flags non-yielding loops, Instance.new parent arguments and deprecated methods', () => {
+  const rules = (s: string) => checkScript(s).map(f => f.rule);
+  assert.deepEqual(rules('while true do\n if x then y() elseif z then w() end\n print(1)\nend'), ['Loop never yields']);
+  assert.deepEqual(rules('while true do\n for i = 1, 3 do print(i) end\n task.wait(1)\nend'), []);
+  assert.deepEqual(rules('while true do\n if done then break end\nend'), []);
+  assert.deepEqual(rules('local p = Instance.new("Part", workspace)\nlocal q = Instance.new("Part")'), ['Instance.new parent argument']);
+  assert.deepEqual(rules('part.Touched:connect(f)\npart:Remove()\ntable.remove(t, 1)'), ['Deprecated method', 'Deprecated method']);
+  assert.match(checkScript('part:Remove()')[0]!.message, /:Destroy\(\)/);
+});

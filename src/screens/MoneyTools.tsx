@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Linking, Text, View } from 'react-native';
 import { Body, Button, Card, Chips, ErrorMessage, Field, Heading, useUI } from '../components/ui';
 import { parseNumber } from '../core/calculators';
-import { priceLadder, robuxProceeds, tycoonCurve, type Tier } from '../core/toolkit';
+import { priceLadder, revenuePlan, robuxProceeds, tycoonCurve, unitRoster, type Tier, type Unit } from '../core/toolkit';
 import { DEVEX_PAGE, validateDevExRate, type DevExRate } from '../core/robloxData';
 import { request } from '../accounts/api';
 export const fmt = (n: number) => n.toLocaleString('en-US', { maximumFractionDigits: 2 });
@@ -76,5 +76,40 @@ export function TycoonTools() {
       {rows.map((r, i) => <View key={r.tier} style={{ gap: 6 }}><View style={ui.spread}><Text style={ui.label}>Tier {r.tier} · {r.flag}</Text><Text style={ui.caption}>{fmt(values[i]!)} seconds</Text></View><View accessibilityLabel={`Tier ${r.tier}: ${fmt(values[i]!)} seconds, ${r.flag}`} style={{ height: 16, backgroundColor: color.pale, borderRadius: 4 }}><View style={{ height: 16, width: `${Math.max(.5, values[i]! / largest * 100)}%`, backgroundColor: r.flag === 'Grindy' ? color.error : color.green, borderRadius: 4 }} /></View><Text style={ui.caption}>Cost {fmt(r.cost)} · income {fmt(r.income)}/sec · wait {fmt(r.seconds)} sec</Text></View>)}
     </>}
     <Body muted>Assumes zero savings, sequential purchases that spend each listed cost, constant income between upgrades, no travel/idle time, and the selected permanent rebirth boost. Rebirth cost and reset downtime are excluded. Fast/grindy labels use your target waits; playtests decide what feels right.</Body>
+  </Card>;
+}
+
+const secs = (n: number) => n < 60 ? `${fmt(n)} sec` : n < 3600 ? `${fmt(n / 60)} min` : `${fmt(n / 3600)} hr`;
+export function UnitRoster() {
+  const { color, ui } = useUI();
+  const [text, setText] = useState('Common Slime, 100, 2\nRare Wolf, 1500, 18\nEpic Dragon, 25000, 120\nLegendary Titan, 400000, 900');
+  const [min, setMin] = useState('30'), [max, setMax] = useState('600'), [rows, setRows] = useState<Unit[]>([]), [error, setError] = useState('');
+  const largest = Math.max(1, ...rows.map(r => r.payback));
+  return <Card><Heading>Steal-game unit roster</Heading>
+    <Body muted>For steal and collect games: one unit per line. Payback is how long a unit takes to earn back its cost. A unit that earns no more than a cheaper one is flagged, because nobody should want it.</Body>
+    <Field label="Units (name, cost, income per second)" value={text} onChangeText={setText} multiline autoCapitalize="none" autoCorrect={false} style={{ minHeight: 140, fontFamily: 'monospace' }} />
+    <View style={ui.wrap}><View style={{ flex: 1, minWidth: 120 }}><Field label="Fastest OK payback seconds" value={min} onChangeText={setMin} keyboardType="decimal-pad" /></View><View style={{ flex: 1, minWidth: 120 }}><Field label="Slowest OK payback seconds" value={max} onChangeText={setMax} keyboardType="decimal-pad" /></View></View>
+    <Button label="Check roster" icon="shield" onPress={() => { try { setRows(unitRoster(text, parseNumber(min), parseNumber(max))); setError(''); } catch (e) { setRows([]); setError(e instanceof Error ? e.message : 'Check the roster.'); } }} />
+    <ErrorMessage message={error} />
+    {rows.map(r => <View key={r.name + r.cost} style={{ gap: 6 }}><View style={ui.spread}><Text style={ui.label}>{r.name}</Text><Text style={[ui.caption, r.flag !== 'On target' && { color: color.error, fontWeight: '700' }]}>{r.flag}</Text></View>
+      <View accessibilityLabel={`${r.name}: payback ${secs(r.payback)}, ${r.flag}`} style={{ height: 14, backgroundColor: color.pale, borderRadius: 7 }}><View style={{ height: 14, width: `${Math.max(1, r.payback / largest * 100)}%`, backgroundColor: r.flag === 'On target' ? color.green : color.error, borderRadius: 7 }} /></View>
+      <Text style={ui.caption}>Cost {fmt(r.cost)} · {fmt(r.income)}/sec · pays back in {secs(r.payback)}</Text></View>)}
+    {!!rows.length && <Body muted>Ignores steals, rebirth boosts and offline earnings. Use the progression graph above for steal losses over a whole run.</Body>}
+  </Card>;
+}
+export function RevenuePlanner() {
+  const { ui } = useUI();
+  const [text, setText] = useState('VIP, 199, 0.5\n2x Cash, 149, 1\nLucky Spin (product), 25, 3');
+  const [players, setPlayers] = useState('1000'), [share, setShare] = useState('70');
+  const [plan, setPlan] = useState<ReturnType<typeof revenuePlan> | null>(null), [error, setError] = useState('');
+  return <Card><Heading>Gamepass & product revenue planner</Heading>
+    <Body muted>One offer per line: name, price in Robux, and the percent of daily players you expect to buy it each day. For one-time gamepasses that percent falls over time as regulars already own it.</Body>
+    <Field label="Offers (name, price, % who buy daily)" value={text} onChangeText={setText} multiline autoCapitalize="none" autoCorrect={false} style={{ minHeight: 120, fontFamily: 'monospace' }} />
+    <View style={ui.wrap}><View style={{ flex: 1, minWidth: 120 }}><Field label="Daily players" value={players} onChangeText={setPlayers} keyboardType="number-pad" /></View><View style={{ flex: 1, minWidth: 120 }}><Field label="Creator share percent" value={share} onChangeText={setShare} keyboardType="decimal-pad" /></View></View>
+    <Button label="Plan revenue" icon="trending-up" onPress={() => { try { setPlan(revenuePlan(text, parseNumber(players), parseNumber(share))); setError(''); } catch (e) { setPlan(null); setError(e instanceof Error ? e.message : 'Check the offers.'); } }} />
+    <ErrorMessage message={error} />
+    {plan && <><Text style={ui.h1}>{fmt(Math.floor(plan.daily))} Robux/day</Text><Body muted>About {fmt(Math.floor(plan.monthly))} Robux kept per 30 days if these rates held.</Body>
+      {[...plan.offers].sort((a, b) => b.dailyRobux - a.dailyRobux).map(o => <View key={o.name} style={ui.spread}><Body>{o.name}</Body><Text style={ui.caption}>{fmt(o.dailyBuys)} buys × {fmt(o.kept)} kept = {fmt(Math.floor(o.dailyRobux))}/day</Text></View>)}
+      <Body muted>A what-if, not a forecast. Real buy rates vary a lot by genre and audience; replace your guesses with numbers from Creator Hub analytics once the game is live.</Body></>}
   </Card>;
 }

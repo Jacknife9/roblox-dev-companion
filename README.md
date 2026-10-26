@@ -1,6 +1,6 @@
 # Roblox Dev Companion
 
-A working Expo / React Native MVP for iPhone, Android, and a browser. Version 0.3.0. All features in this source build are free. It is an independent, unofficial tool for people building Roblox experiences.
+A working Expo / React Native MVP for iPhone, Android, and a browser. Version 0.5.0. All features in this source build are free. It is an independent, unofficial tool for people building Roblox experiences.
 
 **Start here on Windows:** install Node.js 24 LTS, extract the ZIP, open PowerShell in the extracted `roblox-dev-companion` folder, then run:
 
@@ -21,11 +21,12 @@ Install Expo Go on your phone. Keep the PC and phone on the same Wi-Fi. Scan the
 | Projects | Create/edit/delete projects, notes, phase, task add/edit/complete/delete, progress, device persistence |
 | Backups | Export/share or copy JSON, import file or pasted JSON, validation, explicit replacement confirmation, save errors and recovery |
 | Accounts | Optional email/password signup, login/logout, account deletion, per-account project sync, offline device cache and explicit conflict choices |
-| Creator tools | Robux/DevEx, price ladder, tycoon graphs, Scale converter, local script checker, image previews, listing/update helpers, launch tasks, public stats/history/CSV |
-| Appearance | Light/dark toggle, system default, saved device preference |
+| Creator tools | Robux/DevEx, price ladder, revenue planner, tycoon graphs, steal-game unit roster, Scale converter, local script checker, image previews, listing/update helpers, launch tasks, public stats/history/CSV |
+| Studio plugin | Scans every script in your place for common mistakes, jumps to the line, inserts starter templates with undo. See [Studio plugin](docs/STUDIO_PLUGIN.md) |
+| Appearance | Indigo/lime theme, light/dark toggle, system default, saved device preference |
 | Scripts | Ten searchable Luau templates, placement/setup/limits, clipboard copy, `.luau` download or native share |
 
-Ideas use local curated combinations, not a remote AI model. This app does not execute Roblox scripts or replace Roblox Studio. Coins in the calculator are arbitrary in-game units, not Robux or cash.
+Ideas use local curated combinations, not a remote AI model. The phone/web app does not execute Roblox scripts; the Studio plugin reads them inside Studio. Coins in the calculator are arbitrary in-game units, not Robux or cash.
 
 ## Verification
 

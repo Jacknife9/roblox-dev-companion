@@ -1,11 +1,11 @@
 # Creator tools guide
 
-Open the **Tools** tab. All tools in this source build are free. The app is an Expo/React Native app for iPhone and Android, with a React Native Web preview. It is not a Roblox Studio plugin and does not execute Luau. The companion account is separate from Roblox; never enter a Roblox password or `.ROBLOSECURITY` cookie. No Open Cloud keys are needed for the supplied public-data features.
+Open the **Tools** tab. All tools in this source build are free. The app is an Expo/React Native app for iPhone and Android, with a React Native Web version. The app itself does not execute Luau; the separate [Studio plugin](STUDIO_PLUGIN.md) scans the scripts in your place and inserts templates. The companion account is separate from Roblox; never enter a Roblox password or `.ROBLOSECURITY` cookie. No Open Cloud keys are needed for the supplied public-data features.
 
 | Group | Working tools | Needs the included service? |
 |---|---|---|
-| Money | Robux creator-share estimate, live-source DevEx estimate, price ladder avoiding nearby prices | DevEx rate only |
-| Tycoon | Sequential upgrade/rebirth/income model, fixed average theft loss, wait and cumulative-time graphs, fast/grindy targets | No |
+| Money | Robux creator-share estimate, live-source DevEx estimate, price ladder avoiding nearby prices, gamepass/product revenue planner | DevEx rate only |
+| Tycoon | Sequential upgrade/rebirth/income model, fixed average theft loss, wait and cumulative-time graphs, fast/grindy targets, steal-game unit roster checker | No |
 | Code | Offset-to-Scale conversion, copyable UDim2 value, local Luau pattern checks | No |
 | Publish | Local image framing at thumbnail/icon sizes, title/description checks and truncation, update-log formatting/copy, launch checklist saved to Projects | No |
 | Stats | Public visits/players/favorites/votes, observed history, graphs and CSV export | Yes |
@@ -21,6 +21,14 @@ The 70% creator-share field is an editable planning assumption for a creator's o
 
 Price ladders keep suggestions at least 20% apart relative to the higher price, including existing offer prices you enter. This spacing is a design heuristic, not evidence that the prices will convert. Use distinct benefits for permanent passes and repeatable products.
 
+## Revenue planner
+
+One offer per line: name, price, and the percent of daily players you expect to buy it each day. Daily Robux = daily players × buy percent × Robux kept per sale (creator share, rounded down per sale). Monthly is 30 × daily. It is a what-if, not a forecast: one-time gamepass buy rates fall as regulars already own them. Replace guesses with Creator Hub analytics once live.
+
+## Steal-game unit roster
+
+One unit per line: name, cost, income per second. Units are sorted by cost. Payback = cost ÷ income. A unit earning no more than a cheaper unit is flagged as weaker; others are flagged when payback falls outside your fastest/slowest targets. Steals, rebirth boosts and offline earnings are excluded.
+
 ## Progression assumptions
 
 Income is constant between sequential purchases. Each purchase spends its full listed cost; the next tier uses the increased earning rate. Completed rebirths multiply starting income; rebirth costs, reset downtime, starting savings, travel, additional purchases and random theft events are excluded. Average loss reduces income by a fixed percentage. The graph can switch between wait per tier and cumulative seconds. Fast/grindy labels use your own wait targets. Recalculate after editing inputs and validate the model through playtests.
@@ -29,7 +37,7 @@ Income is constant between sequential purchases. Each purchase spends its full l
 
 Offset X divided by parent width gives Scale X; the Y calculation uses parent height. The output assumes zero existing Scale. Add it to an existing Scale component for mixed UDim2 values. AnchorPoint, text scaling, constraints and layout still require device testing.
 
-The script checker masks strings/comments and checks legacy scheduler calls, unprotected-looking DataStore calls and server RemoteEvent callbacks. It does not parse all Luau syntax or perform control/data-flow analysis. Safe wrappers may be flagged; client trust bugs can be missed. It never uploads or executes pasted code. A clean result is not a security certificate. Use the script shelf's placement/limits and test in Studio.
+The script checker masks strings/comments and checks legacy scheduler calls, unprotected-looking DataStore calls, server RemoteEvent callbacks, `while true do` loops with no visible yield, `Instance.new` parent arguments and deprecated `:connect()`/`:disconnect()`/`:Remove()`. Loop detection follows block keywords; a yield hidden inside a called function is still flagged. It does not parse all Luau syntax or perform control/data-flow analysis. Safe wrappers may be flagged; client trust bugs can be missed. It never uploads or executes pasted code. A clean result is not a security certificate. Use the script shelf's placement/limits and test in Studio.
 
 ## Publishing helpers
 

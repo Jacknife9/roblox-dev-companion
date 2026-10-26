@@ -45,5 +45,18 @@ export function checkScript(source: string): Finding[] {
     const direct = clientArguments.some(arg => new RegExp(`\\.Value\\s*(?:[+*/-]?=)\\s*${arg}\\b`).test(body));
     add(m.index, direct ? 'Client value used directly' : 'RemoteEvent review', direct ? 'A client argument appears to write a Value directly. Derive rewards/costs from server-owned data and validate permissions, types, ranges and rate limits.' : 'Review this server callback: validate argument types/ranges, ownership, distance and cooldowns. A client request is never proof of a reward or purchase.');
   }
+  for (const m of code.matchAll(/\bwhile\s+true\s+do\b/g)) {
+    // Walk block keywords to find this loop's end; `then` after elseif continues the same block.
+    const words = /\b(do|then|function|repeat|end|until|elseif)\b/g; words.lastIndex = m.index + m[0].length;
+    let depth = 1, end = code.length, skipThen = false;
+    for (let w; (w = words.exec(code));) {
+      const k = w[1]; if (k === 'elseif') { skipThen = true; continue; }
+      if (k === 'then' && skipThen) { skipThen = false; continue; }
+      depth += k === 'end' || k === 'until' ? -1 : 1; if (!depth) { end = w.index; break; }
+    }
+    if (!/\bwait\s*\(|:\s*Wait\s*\(|\bcoroutine\.yield\b|\bbreak\b|\breturn\b/.test(code.slice(m.index, end))) add(m.index, 'Loop never yields', 'This while true loop has no visible task.wait(), :Wait(), break or return. A loop that never yields freezes the server or client.');
+  }
+  for (const m of code.matchAll(/\bInstance\.new\s*\([^,()]*,/g)) add(m.index, 'Instance.new parent argument', 'Create the instance, set its properties, then set Parent last. Passing the parent to Instance.new makes Roblox replicate every later property change.');
+  for (const m of code.matchAll(/:\s*(connect|disconnect|Remove)\s*\(/g)) add(m.index, 'Deprecated method', `:${m[1]}() is deprecated. Use ${m[1] === 'Remove' ? ':Destroy()' : ':' + m[1]![0]!.toUpperCase() + m[1]!.slice(1) + '()'} instead.`);
   return findings.slice(0, 100).sort((a, b) => a.line - b.line);
 }

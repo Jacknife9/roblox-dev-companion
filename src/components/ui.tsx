@@ -47,8 +47,8 @@ export function Chips<T extends string>({ label, options, value, onChange }: { l
   return <View style={ui.field}><Text style={ui.label}>{label}</Text><View style={ui.wrap}>
     {options.map(option => <Pressable key={option} accessibilityRole="button" accessibilityLabel={`${label}: ${option}`}
       accessibilityState={{ selected: option === value }} aria-pressed={option === value} onPress={() => onChange(option)}
-      style={({ pressed }) => [ui.chip, option === value && { backgroundColor: color.ink, borderColor: color.ink }, pressed && { opacity: 0.7 }]}>
-      <Text style={[ui.chipText, option === value && { color: color.onSelected }]}>{option}</Text>
+      style={({ pressed }) => [ui.chip, option === value && { backgroundColor: color.green, borderColor: color.green }, pressed && { opacity: 0.7 }]}>
+      <Text style={[ui.chipText, option === value && { color: color.onPrimary }]}>{option}</Text>
     </Pressable>)}
   </View></View>;
 }
@@ -63,26 +63,26 @@ export function ErrorMessage({ message }: { message: string }) {
 }
 export function PageTitle({ index, title, subtitle }: { index: string; title: string; subtitle: string }) {
   const { color, ui } = useUI();
-  return <View style={ui.pageTitle}><Text style={ui.eyebrow}>{index}</Text><Text accessibilityRole="header" style={ui.h1}>{title}</Text><Body muted>{subtitle}</Body></View>;
+  return <View style={ui.pageTitle}><View style={{ width: 44, height: 6, borderRadius: 3, backgroundColor: color.lime }} /><Text style={ui.eyebrow}>{index}</Text><Text accessibilityRole="header" style={ui.h1}>{title}</Text><Body muted>{subtitle}</Body></View>;
 }
 const createStyles = (color: Palette) => StyleSheet.create({
   screen: { padding: 24, gap: 24, paddingBottom: 40, width: '100%', maxWidth: 1120, alignSelf: 'center' },
-  pageTitle: { gap: 8, marginBottom: 4 }, eyebrow: { color: color.green, fontSize: 11, fontWeight: '800', letterSpacing: 1.8 },
-  h1: { color: color.ink, fontSize: 32, lineHeight: 38, fontWeight: '800', letterSpacing: -1 },
-  h2: { color: color.ink, fontSize: 23, lineHeight: 29, fontWeight: '700', letterSpacing: -0.5 },
+  pageTitle: { gap: 8, marginBottom: 4 }, eyebrow: { color: color.green, fontSize: 12, fontWeight: '900', letterSpacing: 2 },
+  h1: { color: color.ink, fontSize: 38, lineHeight: 44, fontWeight: '900', letterSpacing: -1.4 },
+  h2: { color: color.ink, fontSize: 23, lineHeight: 29, fontWeight: '800', letterSpacing: -0.6 },
   h3: { color: color.ink, fontSize: 17, lineHeight: 23, fontWeight: '700' },
   body: { color: color.ink, fontSize: 15, lineHeight: 23 }, caption: { color: color.muted, fontSize: 12, lineHeight: 18 },
-  card: { backgroundColor: color.surface, borderColor: color.line, borderWidth: 1, borderRadius: 16, padding: 20, gap: 16 },
-  button: { minHeight: 46, borderWidth: 1, borderColor: color.line, backgroundColor: color.surface, borderRadius: 10, paddingHorizontal: 18, paddingVertical: 11, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 8 },
-  buttonText: { fontSize: 14, fontWeight: '700', flexShrink: 1 },
+  card: { backgroundColor: color.surface, borderColor: color.line, borderWidth: 1, borderRadius: 22, padding: 22, gap: 16, boxShadow: '0 1px 2px rgba(10, 12, 40, 0.05), 0 10px 30px rgba(10, 12, 40, 0.07)' },
+  button: { minHeight: 46, borderWidth: 1, borderColor: color.line, backgroundColor: color.surface, borderRadius: 14, paddingHorizontal: 20, paddingVertical: 12, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 8 },
+  buttonText: { fontSize: 15, fontWeight: '800', flexShrink: 1 },
   field: { gap: 8 }, label: { color: color.ink, fontSize: 13, fontWeight: '700' },
-  input: { borderWidth: 1, borderColor: color.line, borderRadius: 10, minHeight: 48, paddingHorizontal: 14, paddingVertical: 12, color: color.ink, fontSize: 15, backgroundColor: color.surface },
+  input: { borderWidth: 1, borderColor: color.line, borderRadius: 12, minHeight: 48, paddingHorizontal: 14, paddingVertical: 12, color: color.ink, fontSize: 15, backgroundColor: color.surface },
   wrap: { flexDirection: 'row', gap: 8, flexWrap: 'wrap', alignItems: 'center' }, row: { flexDirection: 'row', gap: 12, alignItems: 'center' },
   spread: { flexDirection: 'row', gap: 12, alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap' },
-  chip: { minHeight: 44, paddingHorizontal: 14, paddingVertical: 11, borderWidth: 1, borderColor: color.line, borderRadius: 9, backgroundColor: color.surface },
-  chipText: { color: color.muted, fontSize: 13, fontWeight: '600' },
-  pill: { alignSelf: 'flex-start', backgroundColor: color.pale, borderRadius: 6, paddingVertical: 5, paddingHorizontal: 9 },
-  pillText: { color: color.green, fontSize: 11, fontWeight: '800', letterSpacing: 0.4 },
+  chip: { minHeight: 44, paddingHorizontal: 14, paddingVertical: 11, borderWidth: 1, borderColor: color.line, borderRadius: 999, backgroundColor: color.surface },
+  chipText: { color: color.ink, fontSize: 13, fontWeight: '700' },
+  pill: { alignSelf: 'flex-start', backgroundColor: color.lime, borderRadius: 999, paddingVertical: 5, paddingHorizontal: 9 },
+  pillText: { color: '#121430', fontSize: 11, fontWeight: '800', letterSpacing: 0.4 },
   divider: { height: 1, backgroundColor: color.line }, error: { flexDirection: 'row', alignItems: 'flex-start', gap: 10, padding: 16, backgroundColor: color.errorBg, borderRadius: 10 },
   code: { color: color.codeText, fontFamily: 'monospace', fontSize: 12, lineHeight: 21 },
 });
