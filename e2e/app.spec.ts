@@ -118,6 +118,8 @@ test('backup export, validation, cancel, and confirmed restore work', async ({ p
 test('screens have no runtime errors or horizontal document overflow', async ({ page }, info) => {
   const errors: string[] = [];
   page.on('pageerror', e => errors.push(e.message));
+  page.on('console', entry => { if (entry.type() === 'error' || entry.type() === 'warning') errors.push(entry.text()); });
+  await page.reload();
   for (const tab of ['Ideas', 'Balance', 'Projects', 'Scripts']) {
     await page.getByRole('tab', { name: tab, exact: true }).click();
     expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
@@ -125,4 +127,16 @@ test('screens have no runtime errors or horizontal document overflow', async ({ 
   expect(errors).toEqual([]);
   await page.getByRole('tab', { name: 'Ideas', exact: true }).click();
   await page.screenshot({ path: `test-results/${info.project.name}-ideas.png`, fullPage: true });
+});
+
+test('layout fits narrow phones, tablets, and wide screens', async ({ page }) => {
+  for (const width of [320, 768, 1024, 1440]) {
+    await page.setViewportSize({ width, height: 900 });
+    for (const tab of ['Ideas', 'Balance', 'Projects', 'Scripts']) {
+      await page.getByRole('tab', { name: tab, exact: true }).click();
+      expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+    }
+    const about = await page.getByRole('button', { name: 'About this app', exact: true }).boundingBox();
+    expect(about!.x + about!.width).toBeLessThanOrEqual(width);
+  }
 });

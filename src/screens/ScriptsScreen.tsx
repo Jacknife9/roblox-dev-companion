@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useRef, useState } from 'react';
 import { Platform, ScrollView, Text, View } from 'react-native';
 import * as Clipboard from 'expo-clipboard';
 import { searchTemplates, templates } from '../data/templates';
@@ -10,12 +10,13 @@ export function ScriptsScreen({ notify }: { notify: (message: string) => void })
   const [category, setCategory] = useState('All');
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [error, setError] = useState('');
+  const scroll = useRef<ScrollView>(null);
   const selected = templates.find(t => t.id === selectedId);
   const found = searchTemplates(query, category);
   async function act(fn: () => Promise<void>) {
     try { await fn(); setError(''); } catch (e) { setError(e instanceof Error ? e.message : 'Could not export this script.'); }
   }
-  return <ScrollView keyboardShouldPersistTaps="handled" contentContainerStyle={ui.screen}>
+  return <ScrollView ref={scroll} keyboardShouldPersistTaps="handled" contentContainerStyle={ui.screen}>
     <PageTitle index="04 / SCRIPT SHELF" title="A useful head start." subtitle="Readable Luau templates. Clear setup. Yours to adapt in Studio." />
     <Card style={{ backgroundColor: color.pale }}><Body>Scripts run in Roblox Studio on your computer. This app helps you read, copy, and share them while planning your build.</Body></Card>
     <Field label="Search scripts" value={query} onChangeText={setQuery} placeholder="Try coins, checkpoint, or touch" autoCapitalize="none" />
@@ -38,7 +39,7 @@ export function ScriptsScreen({ notify }: { notify: (message: string) => void })
     {found.map(t => <Card key={t.id}>
       <View style={ui.spread}><Pill>{t.category}</Pill><Text style={ui.caption}>{t.kind}</Text></View>
       <Heading>{t.title}</Heading><Body muted>{t.summary}</Body>
-      <Button label={`Open ${t.title}`} icon="code" tone="secondary" onPress={() => setSelectedId(t.id)} />
+      <Button label={`Open ${t.title}`} icon="code" tone="secondary" onPress={() => { setSelectedId(t.id); scroll.current?.scrollTo({ y: 0, animated: true }); }} />
     </Card>)}
   </ScrollView>;
 }

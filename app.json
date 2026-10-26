@@ -3,6 +3,7 @@
     "name": "Roblox Dev Companion",
     "slug": "roblox-dev-companion",
     "version": "0.1.0",
+    "icon": "./assets/icon.png",
     "orientation": "default",
     "userInterfaceStyle": "light",
     "ios": {
@@ -17,10 +18,12 @@
     },
     "web": {
       "bundler": "metro",
-      "name": "Dev Companion"
+      "name": "Dev Companion",
+      "favicon": "./assets/icon.png"
     },
     "plugins": [
-      "expo-sharing"
+      "expo-sharing",
+      "expo-font"
     ]
   }
 }

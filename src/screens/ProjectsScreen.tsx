@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useRef, useState } from 'react';
 import { Pressable, ScrollView, Text, View } from 'react-native';
 import * as Clipboard from 'expo-clipboard';
 import { createProject, MAX_PROJECTS, projectProgress, type Project } from '../core/projects';
@@ -18,12 +18,13 @@ export function ProjectsScreen({ workspace, selectedId, onSelect, onUpdate, noti
   const [paste, setPaste] = useState(false);
   const [backupText, setBackupText] = useState('');
   const [busy, setBusy] = useState(false);
+  const scroll = useRef<ScrollView>(null);
   const project = workspace.projects.find(p => p.id === selectedId);
   const taskCount = workspace.projects.reduce((sum, p) => sum + p.tasks.filter(t => !t.done).length, 0);
-  async function act(fn: () => void | Promise<void>) {
-    try { setBusy(true); await fn(); setError(''); }
+  async function act(fn: () => void | Promise<void>, trackBusy = true) {
+    try { if (trackBusy) setBusy(true); await fn(); setError(''); }
     catch (e) { setError(e instanceof Error ? e.message : 'Could not complete this action.'); }
-    finally { setBusy(false); }
+    finally { if (trackBusy) setBusy(false); }
   }
   function addProject() {
     void act(() => {
@@ -38,12 +39,15 @@ export function ProjectsScreen({ workspace, selectedId, onSelect, onUpdate, noti
   function changeProject(next: Project) {
     onUpdate(previous => ({ ...previous, projects: previous.projects.map(p => p.id === next.id ? next : p) }));
   }
-  return <ScrollView keyboardShouldPersistTaps="handled" contentContainerStyle={ui.screen}>
+  return <ScrollView ref={scroll} keyboardShouldPersistTaps="handled" contentContainerStyle={ui.screen}>
     <PageTitle index="03 / YOUR WORKSPACE" title="Small steps. Playable progress." subtitle="Keep your next build moving, one useful task at a time." />
     <View style={ui.spread}><View style={ui.row}><Pill>{workspace.projects.length} PROJECT{workspace.projects.length === 1 ? '' : 'S'}</Pill><Text style={ui.caption}>{taskCount} open tasks</Text></View><Button label="New project" icon="plus" onPress={() => setCreating(!creating)} /></View>
     {creating && <Card><Heading small>Start a project</Heading><Field label="New project name" value={title} onChangeText={setTitle} maxLength={100} placeholder="Your next game" onSubmitEditing={addProject} /><View style={ui.wrap}><Button label="Create project" onPress={addProject} /><Button label="Cancel" tone="secondary" onPress={() => setCreating(false)} /></View></Card>}
     {!workspace.projects.length && !creating && <Card style={{ alignItems: 'center', paddingVertical: 36 }}><Icon name="folder" size={38} tint={color.green} /><Heading>A clean slate.</Heading><Body muted>Create a project or save a concept from Ideas. Your projects stay on this device.</Body><Button label="Create your first project" icon="plus" tone="secondary" onPress={() => setCreating(true)} /></Card>}
-    {workspace.projects.map(p => <Pressable key={p.id} accessibilityRole="button" accessibilityLabel={`Open project: ${p.title}`} onPress={() => onSelect(p.id)}
+    {project && <ProjectEditor key={project.id} project={project} onChange={changeProject} onClose={() => onSelect(null)} onDelete={() => void act(() => {
+      onUpdate(previous => ({ ...previous, projects: previous.projects.filter(p => p.id !== project.id) })); onSelect(null); notify('Project deleted');
+    })} />}
+    {workspace.projects.map(p => <Pressable key={p.id} accessibilityRole="button" accessibilityLabel={`Open project: ${p.title}`} onPress={() => { onSelect(p.id); scroll.current?.scrollTo({ y: 0, animated: true }); }}
       style={({ pressed }) => ({ opacity: pressed ? 0.7 : 1 })}>
       <Card style={{ borderColor: p.id === selectedId ? color.green : color.line }}>
         <View style={ui.spread}><Pill>{p.phase}</Pill><Text style={ui.caption}>{p.genre}</Text></View>
@@ -51,15 +55,12 @@ export function ProjectsScreen({ workspace, selectedId, onSelect, onUpdate, noti
         <Text style={ui.caption}>{p.tasks.filter(t => t.done).length}/{p.tasks.length} tasks complete · {projectProgress(p)}%</Text>
       </Card>
     </Pressable>)}
-    {project && <ProjectEditor key={project.id} project={project} onChange={changeProject} onClose={() => onSelect(null)} onDelete={() => void act(() => {
-      onUpdate(previous => ({ ...previous, projects: previous.projects.filter(p => p.id !== project.id) })); onSelect(null); notify('Project deleted');
-    })} />}
     <ErrorMessage message={error} />
     <Card><View style={ui.row}><Icon name="hard-drive" /><Heading small>Backups & device data</Heading></View>
       <Body muted>Local saves stay here. Export a backup before reinstalling, clearing browser data, or changing phones. Backups include project notes.</Body>
       <View style={ui.wrap}>
         <Button label="Export backup" icon="download" tone="secondary" disabled={busy} onPress={() => void act(() => exportText('dev-companion-backup.json', serializeBackup(workspace)))} />
-        <Button label="Import backup" icon="upload" tone="secondary" disabled={busy} onPress={() => void act(async () => { const raw = await pickBackup(); if (raw !== null) setPending(parseBackup(raw)); })} />
+        <Button label="Import backup" icon="upload" tone="secondary" disabled={busy} onPress={() => void act(async () => { const raw = await pickBackup(); if (raw !== null) setPending(parseBackup(raw)); }, false)} />
         <Button label="Copy backup" icon="copy" tone="quiet" disabled={busy} onPress={() => void act(async () => { await Clipboard.setStringAsync(serializeBackup(workspace)); notify('Backup copied'); })} />
       </View>
       <Button label={paste ? 'Hide backup text' : 'Restore from pasted text'} tone="quiet" onPress={() => setPaste(!paste)} />
